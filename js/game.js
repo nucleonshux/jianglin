@@ -140,7 +140,13 @@
   function performAttack() {
     // 返回 { dmg, extraMsg, whiffed }
     const w = currentWeapon();
-    if (!w || !w.weapon) return { dmg: 1, extraMsg: "", whiffed: false };
+    if (!w || !w.weapon) {
+      let dmg = 1;
+      // 巨像指节：空手+1
+      const hasKnuckle = equippedList().includes("giant_knuckle");
+      if (hasKnuckle) dmg += 1;
+      return { dmg, extraMsg: "", whiffed: false };
+    }
     const spec = w.weapon;
     // 扳手挥空（第三只眼免疫）
     const noWhiff = equippedList().some((id) => {
@@ -926,6 +932,12 @@
       } else if (S.timesTuned === 8) {
         S.lightsBroken = true;
         showEventModal("你把巨像砸烂的瞬间，仪器里冒出一股焦味。灯灭了。它什么都不会再告诉你了。");
+      }
+      // 小BOSS随机掉专属饰品
+      if (Math.random() < 0.6) {
+        const dropId = S.timesTuned === 5 ? "old_mic" : "giant_knuckle";
+        addToBag(dropId);
+        log(`★ ${itemName(dropId)} —— ${itemDesc(dropId)}`, "good");
       }
     }
 
