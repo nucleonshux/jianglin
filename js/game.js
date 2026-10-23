@@ -124,13 +124,38 @@
     });
     return r;
   }
-  function attackPower() {
-    let p = 1;
-    equippedList().forEach((id) => {
-      const t = GAME_DATA.trinkets[id];
-      if (t && t.mods.attackPower) p += t.mods.attackPower - 1;
-    });
-    return p;
+  function currentWeapon() {
+    if (!S.equipped.weapon) return null;
+    return GAME_DATA.trinkets[S.equipped.weapon];
+  }
+
+  function performAttack() {
+    // 返回 { dmg, extraMsg, whiffed }
+    const w = currentWeapon();
+    if (!w || !w.weapon) return { dmg: 1, extraMsg: "", whiffed: false };
+    const spec = w.weapon;
+    // 扳手挥空
+    if (spec.whiff && Math.random() < spec.whiff) {
+      return { dmg: 0, extraMsg: "但你挥空了。", whiffed: true };
+    }
+    let dmg = spec.base;
+    let msg = "";
+    // 水果刀连击
+    if (spec.comboChance && Math.random() < spec.comboChance) {
+      dmg *= 2;
+      msg = "连击！";
+    }
+    // 玻璃碎片割手
+    if (spec.backfire && Math.random() < spec.backfire) {
+      S.spirit = Math.max(0, S.spirit - 2);
+      msg = "割到了自己。";
+    }
+    // 音叉回精神
+    if (spec.spiritOnHit) {
+      S.spirit = Math.min(spiritMax(), S.spirit + spec.spiritOnHit);
+      msg = `精神 +${spec.spiritOnHit}。`;
+    }
+    return { dmg, extraMsg: msg, whiffed: false };
   }
 
   function pick(key) {
@@ -605,8 +630,13 @@
       if (move === "attack") {
         // 硬碰硬：50/50
         if (Math.random() < 0.5) {
-          b.hp -= attackPower();
-          log(pick(attackPower() > 1 ? "clash_win" : "clash_win_bare") + ` 它受了${attackPower()}下。`, "good");
+          const atk = performAttack();
+          if (!atk.whiffed) {
+            b.hp -= atk.dmg;
+            log(pick(atk.dmg > 1 ? "clash_win" : "clash_win_bare") + ` 它受了${atk.dmg}下。 ${atk.extraMsg}`, "good");
+          } else {
+            log(pick("clash_win_bare") + " 它退了一步，但你没打中。", "system");
+          }
         } else {
           let dmg = m.spiritDamage * (1 - dmgReduce());
           dmg = Math.round(dmg);
@@ -653,8 +683,13 @@
     } else {
       // 怪物闪避
       if (move === "attack") {
-        b.hp -= attackPower();
-        log(pick(attackPower() > 1 ? "hit_foe" : "hit_foe_bare") + ` 它受了${attackPower()}下。`, "good");
+        const atk = performAttack();
+        if (!atk.whiffed) {
+          b.hp -= atk.dmg;
+          log(pick(atk.dmg > 1 ? "hit_foe" : "hit_foe_bare") + ` 它受了${atk.dmg}下。 ${atk.extraMsg}`, "good");
+        } else {
+          log(pick("miss"), "system");
+        }
       } else if (move === "defend") {
         S.spirit = Math.min(spiritMax(), S.spirit + 2);
         log(pick("defend_ok") + " 精神 +2。", "good");
