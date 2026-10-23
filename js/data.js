@@ -245,16 +245,16 @@ const GAME_DATA = {
       { label: "穿上外套", ok: {spirit: 10}, bad: {spirit: -8}, luckMod: 0.1, okText: "外套很暖。口袋里有一颗糖。", badText: "外套很沉。口袋里有一张你的照片。照片上你在哭。" },
       { label: "只掏口袋", ok: {give: "cracker", spirit: 3}, bad: {spirit: -5}, luckMod: 0, okText: "你掏出一块压缩饼干。", badText: "你掏出口袋。里面是一根手指。指甲是你的。" },
     ]},
-    { weight: 1, text: "楼梯口有一滩水，向上流。", options: [
-      { label: "往上走", ok: {spirit: 15}, bad: {spirit: -12}, luckMod: -0.1, okText: "你顺着水走。尽头是一扇窗。窗外是白天。", badText: "你走到头。水是从天花板渗下来的。上面有东西在看你。" },
-      { label: "绕开", ok: {spirit: 3}, bad: {spirit: -3}, luckMod: 0, okText: "你绕开了。水还在流。", badText: "你绕开时，水溅到了你脸上。它是温的。" },
+    { weight: 1, text: "卫生间水龙头一直在滴答。你拧紧了，它还在滴。", options: [
+      { label: "拆开水龙头", ok: {spirit: 12, give: "water"}, bad: {spirit: -10}, luckMod: 0.1, okText: "水龙头里掉出一卷胶布。水终于停了。", badText: "水龙头里掉出来一截头发。它还在动。" },
+      { label: "不管它", ok: {spirit: 3}, bad: {spirit: -5}, luckMod: 0, okText: "你走了。滴答声留在了身后。", badText: "你躺下时，滴答声在你枕头边上。" },
     ]},
     { weight: 1, text: "电视开着。屏幕上在放你昨天做的事。", options: [
       { label: "坐下来看", ok: {spirit: 5}, bad: {spirit: -10}, luckMod: 0.1, okText: "你看了一会儿。它放完了。", badText: "你看了一会儿。它开始放你没做过的事。" },
       { label: "关掉", ok: {spirit: 3}, bad: {spirit: -5}, luckMod: 0, okText: "你关了。屏幕黑了。", badText: "你关了。它又自己开了。" },
     ]},
     { weight: 1, text: "床底下有人在呼吸。", options: [
-      { label: "趴下去看", ok: {spirit: 8, give: "black_tape"}, bad: {spirit: -15}, luckMod: -0.2, okText: "床底下是空的。有一卷黑胶布。", badText: "床底下有一双眼睛。它和你一起躺了下来。" },
+      { label: "趴下去看", ok: {spirit: 8, give: "black_tape"}, bad: {spirit: -15}, luckMod: -0.2, okText: "床底下是空的。有一卷黑胶布。", badText: "床底下有一只腐臭膨胀的猫咪。它在看你。" },
       { label: "上床睡", ok: {spirit: 10}, bad: {spirit: -8}, luckMod: 0, okText: "你上床睡了。呼吸声慢慢停了。", badText: "你刚躺下。呼吸声在你耳朵边上。" },
     ]},
   ],
