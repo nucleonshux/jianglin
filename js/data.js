@@ -170,6 +170,14 @@ const GAME_DATA = {
     { weight: 2, text: "公园长椅。树叶的影子在你手背上走。你闭了一会儿眼。", effect: { type: "spirit", value: 4 }, luck: 2 },
     { weight: 2, text: "雨打在窗户上。你听着听着，忘了自己为什么在这里。", effect: { type: "spirit", value: 4 }, luck: 1 },
     { weight: 2, text: "楼道灯坏了。你摸着黑走，脚下是自己的家。", effect: { type: "spirit", value: 3 }, luck: 1 },
+    // 负面小事件
+    { weight: 2, text: "钢琴自己在弹。你认出那首曲子——是你葬礼上会放的那首。", effect: { type: "spirit", value: -5 }, luck: -1 },
+    { weight: 2, text: "照片里所有人都在看你身后。你没有回头。", effect: { type: "spirit", value: -6 }, luck: -1 },
+    { weight: 2, text: "有人在你身后数你的脚步。你走快，它也快。", effect: { type: "spirit", value: -6 }, luck: -1 },
+    { weight: 2, text: "电梯里贴着寻人启事。照片上的人是你。", effect: { type: "spirit", value: -5 }, luck: -1 },
+    { weight: 1, text: "镜子里的你慢了半拍。你笑，它没笑。", effect: { type: "spirit", value: -8 }, luck: -2 },
+    { weight: 1, text: "走廊尽头有人在叫你小时候的乳名。你没走过去。", effect: { type: "spirit", value: -5 }, luck: -1 },
+    { weight: 1, text: "银幕上在放你的一天。观众席有人在笑。", effect: { type: "spirit", value: -6 }, luck: -1 },
 
     // 有选择
     { weight: 2, text: "自动售货机嗡嗡响。投币口卡着一罐东西。", options: [
@@ -288,6 +296,11 @@ const GAME_DATA = {
       name: "旧耳机",
       desc: "逃跑不扣精神。",
       mods: { fleeNoPenalty: true },
+    },
+    noise_canceler: {
+      name: "抗噪耳塞",
+      desc: "戴上后，即使在白噪声里也能听清高低。",
+      mods: { ignoreNoise: true },
     },
     dirty_bandage: {
       name: "脏绷带",

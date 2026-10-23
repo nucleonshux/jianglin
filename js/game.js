@@ -534,11 +534,11 @@
       if (S.lightsBroken) {
         setLights(null);
         log("仪器好像被摔坏了，指示灯不亮了。", "bad");
-      } else if (S.proximityMode) {
+      } else if (S.proximityMode && !equippedList().includes("noise_canceler")) {
         const dist = Math.abs(n - S.bossChannel);
         const near = dist < 15;
         setLights(near ? "low" : "high"); // 左=近，右=远
-        log(near ? "（离它近了）" : "（离它远了）", "system");
+        log(near ? "（你觉得它近了）" : "（你觉得它远了）", "system");
       } else {
         const isHigh = n > S.bossChannel;
         setLights(isHigh ? "high" : "low");
@@ -922,10 +922,13 @@
     if (b.isMiniboss) {
       if (S.timesTuned === 5) {
         S.proximityMode = true;
-        showEventModal("它碎掉的瞬间，周围起了雾。仪器不再告诉你高低。你只能感觉到，近了还是远了。");
+        showEventModal("它碎掉的瞬间，耳机里炸开一阵刺耳的白噪声。仪器不再告诉你高低。你只能感觉到，近了还是远了。");
       } else if (S.timesTuned === 8) {
         S.lightsBroken = true;
         showEventModal("你把巨像砸烂的瞬间，仪器里冒出一股焦味。灯灭了。它什么都不会再告诉你了。");
+        // 掉落抗噪耳塞
+        addToBag("noise_canceler");
+        log("★ 它的耳朵掉了下来——一副抗噪耳塞。戴上它，白噪声就小了。", "good");
       }
     }
 
@@ -949,7 +952,7 @@
         }
       }
     }
-    if (Math.random() < 0.15) {
+    if (Math.random() < 0.3) {
       const ids = Object.keys(GAME_DATA.consumables);
       addToBag(ids[Math.floor(Math.random() * ids.length)]);
     }
