@@ -733,15 +733,14 @@
 
     // 结果描述
     const resultText = success ? (opt.okText || "你做到了。") : (opt.badText || "出了意外。");
-    let suffix = "";
+    log(resultText, success ? "good" : "bad");
     if (result.spirit) {
       const before = S.spirit;
       S.spirit = Math.min(spiritMax(), S.spirit + result.spirit);
       const actual = S.spirit - before;
-      if (actual > 0) suffix = `（精神 +${actual}）`;
-      else if (actual < 0) suffix = `（精神 ${actual}）`;
+      if (actual > 0) log(`（精神 +${actual}）`, "good");
+      else if (actual < 0) log(`（精神 ${actual}）`, "bad");
     }
-    log(resultText + (suffix ? " " + suffix : ""), success ? "good" : "bad");
     if (result.tries) {
       S.tries += result.tries;
       log(`（调频机会 +${result.tries}）`, "good");

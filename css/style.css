@@ -218,7 +218,7 @@ html, body {
 
 /* ---------- 文字描述区（蓝条占位） ---------- */
 #log {
-  height: 80px;
+  height: 110px;
   background: #1a1a1a;
   border: 3px solid #000;
   box-shadow: inset 0 0 0 1px #333;
