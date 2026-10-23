@@ -964,7 +964,7 @@
     if (b.isMiniboss) {
       if (S.timesTuned === 5) {
         S.proximityMode = true;
-        showEventModal("它碎掉的瞬间，耳机里炸开一阵刺耳的白噪声。仪器不再告诉你高低。你只能感觉到，近了还是远了。");
+        showEventModal("它碎掉的瞬间，耳机里炸开一阵刺耳的白噪声。仪器不再告诉你高低。你只能感觉到，目标近了还是远了。");
       } else if (S.timesTuned === 8) {
         S.lightsBroken = true;
         showEventModal("你把巨像砸烂的瞬间，仪器里冒出一股焦味。灯灭了。它什么都不会再告诉你了。");
