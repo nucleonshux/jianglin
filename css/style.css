@@ -218,16 +218,35 @@ html, body {
 
 /* ---------- 文字描述区（蓝条占位） ---------- */
 #log {
-  height: 60px;
+  height: 80px;
   background: #1a1a1a;
   border: 3px solid #000;
   box-shadow: inset 0 0 0 1px #333;
   color: #d8d8d8;
-  padding: 2px 8px;
+  padding: 2px 4px;
   overflow: hidden;
   font-size: 12px;
   line-height: 1.4;
+  display: flex;
+  align-items: stretch;
 }
+#log-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2px 4px;
+  scrollbar-width: none;
+}
+#log-content::-webkit-scrollbar { display: none; }
+.log-nav {
+  background: #222;
+  border: 1px solid #444;
+  color: #888;
+  font-size: 10px;
+  cursor: pointer;
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+.log-nav:hover { color: #fff; }
 .log-line { margin-bottom: 2px; }
 .log-line.system { color: #888; }
 .log-line.good    { color: #fff; }

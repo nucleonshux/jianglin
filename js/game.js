@@ -20,6 +20,8 @@
     triesNum: $("tries-num"),
     trinketSlot: $("trinket-slot"),
     logContent: $("log-content"),
+    logUp: $("log-up"),
+    logDown: $("log-down"),
     inputDisplay: $("input-display"),
     keys: document.querySelectorAll(".key[data-k]"),
     viewNumpad: $("view-numpad"),
@@ -202,9 +204,8 @@
     p.className = "log-line latest" + (type ? " " + type : "");
     p.textContent = text;
     el.logContent.appendChild(p);
-    while (el.logContent.children.length > 3) {
-      el.logContent.removeChild(el.logContent.firstChild);
-    }
+    // 自动滚到底
+    el.logContent.scrollTop = el.logContent.scrollHeight;
   }
 
   function updateHUD() {
@@ -734,19 +735,16 @@
     S.luck = Math.max(0, Math.min(100, S.luck));
 
     // 结果描述
-    if (success) {
-      log(opt.okText || "你做到了。", "good");
-    } else {
-      log(opt.badText || "出了意外。", "bad");
-    }
-
+    const resultText = success ? (opt.okText || "你做到了。") : (opt.badText || "出了意外。");
+    let suffix = "";
     if (result.spirit) {
       const before = S.spirit;
       S.spirit = Math.min(spiritMax(), S.spirit + result.spirit);
       const actual = S.spirit - before;
-      if (actual > 0) log(`（精神 +${actual}）`, "good");
-      else if (actual < 0) log(`（精神 ${actual}）`, "bad");
+      if (actual > 0) suffix = `（精神 +${actual}）`;
+      else if (actual < 0) suffix = `（精神 ${actual}）`;
     }
+    log(resultText + (suffix ? " " + suffix : ""), success ? "good" : "bad");
     if (result.tries) {
       S.tries += result.tries;
       log(`（调频机会 +${result.tries}）`, "good");
@@ -1049,6 +1047,12 @@
   /* ---------- 事件绑定 ---------- */
   el.startBtn.addEventListener("click", startGame);
   el.restartBtn.addEventListener("click", startGame);
+  el.logUp.addEventListener("click", () => {
+    el.logContent.scrollTop -= 40;
+  });
+  el.logDown.addEventListener("click", () => {
+    el.logContent.scrollTop += 40;
+  });
   $("btn-replace-skip").addEventListener("click", () => {
     el.replaceOverlay.classList.add("hidden");
     log("你没有拾取。", "system");
