@@ -202,7 +202,7 @@ const GAME_DATA = {
     ]},
     { weight: 1, text: "黑板上用粉笔写着你的名字。另一半是你自己的笔迹。", options: [
       { label: "全擦掉", ok: {spirit: 8}, bad: {spirit: -8}, luckMod: 0.1, okText: "你擦干净了。黑板上空空的。", badText: "你擦到一半，名字自己又长了出来。" },
-      { label: "留着", ok: {spirit: -3}, bad: {spirit: -3}, luckMod: 0, okText: "你没擦。它在那里看着你，你转身走了。", badText: "你没擦。它跟着你出了这个房间。" },
+      { label: "留着", ok: {spirit: -3}, bad: {spirit: -3}, luckMod: 0, okText: "你没擦。它在那里看着你，你转身走了。", badText: "你没擦。黑板上开始密密麻麻浮现出你不认识的字符，你打了个寒颤。" },
     ]},
     { weight: 1, text: "照片里所有人都在看你身后。", options: [
       { label: "回头看", ok: {spirit: 10, give: "black_tape"}, bad: {spirit: -15}, luckMod: -0.2, okText: "身后什么都没有。地上有一卷黑胶布。", badText: "身后有什么东西跟你回来了。" },
@@ -230,7 +230,7 @@ const GAME_DATA = {
     ]},
     { weight: 1, text: "ATM 吐出一张卡，背面写着你的身份证号。", options: [
       { label: "拿走卡", ok: {tries: 1}, bad: {spirit: -10}, luckMod: -0.2, okText: "你拿走卡。ATM 多吐了一次。", badText: "卡上的名字慢慢变成了你的。" },
-      { label: "推回去", ok: {spirit: 3}, bad: {spirit: 0}, luckMod: 0, okText: "你把卡推回去。它再也没出来。", badText: "你把卡推回去。它在机器里看着你。" },
+      { label: "推回去", ok: {spirit: 3}, bad: {spirit: 0}, luckMod: 0, okText: "你把卡推回去。它再也没出来。", badText: "你把卡推回去。发现有双眼睛在机器里看着你。" },
     ]},
     { weight: 1, text: "一个白大褂的人递给你两团棉花。\"戴上它。\"他说。", options: [
       { label: "接过棉花", ok: {give: "noise_canceler"}, bad: {spirit: -15}, luckMod: 0.1, okText: "你把棉花塞进耳朵。白噪声小了。", badText: "这棉花黑黑的，像一团头发。" },
