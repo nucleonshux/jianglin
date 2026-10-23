@@ -213,7 +213,7 @@ const GAME_DATA = {
       { label: "只洗澡", ok: {spirit: 12}, bad: {spirit: -3}, luckMod: 0, okText: "热水冲下来，你觉得轻了一点。", badText: "水忽然变凉了。" },
     ]},
     { weight: 1, text: "天台风很大。你站在边上，忽然觉得被什么东西从后面轻轻推了一下。", options: [
-      { label: "往前迈一步", ok: {spirit: 20}, bad: {spirit: -20}, luckMod: -0.4, okText: "你迈出去——脚下是空的，但你醒了。", badText: "你迈出去——这次没有醒。" },
+      { label: "往前迈一步", ok: {spirit: 20}, bad: {spirit: -20}, luckMod: -0.4, okText: "你迈出去——风灌进肺里，你还活着。", badText: "你迈出去——那一下像被人从背后猛推了一把。" },
       { label: "退回来", ok: {spirit: 5}, bad: {spirit: -2}, luckMod: 0, okText: "你退回来了。风还在吹。", badText: "你退回来时，差点摔。" },
     ]},
     { weight: 1, text: "有人在你身后数你的脚步。你走快，它也快。", options: [
