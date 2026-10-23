@@ -747,12 +747,7 @@
     }
     if (result.give) {
       addToBag(result.give);
-      const type = itemType(result.give);
-      if (type === "consumable") {
-        log(`· 你捡到了 ${itemName(result.give)}（${itemDesc(result.give)}）`, "good");
-      } else {
-        log(`★ ${itemName(result.give)} —— ${itemDesc(result.give)}`, "good");
-      }
+      log(`★ ${itemName(result.give)} —— ${itemDesc(result.give)}`, "good");
     }
     updateHUD();
     setTimeout(() => {
