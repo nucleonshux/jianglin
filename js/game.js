@@ -1,0 +1,744 @@
+﻿/* ============================================
+   降临 DESCENT — 主逻辑
+   ============================================ */
+
+(function () {
+  "use strict";
+
+  /* ---------- DOM ---------- */
+  const $ = (id) => document.getElementById(id);
+  const el = {
+    titleScreen: $("title-screen"),
+    startBtn: $("btn-start"),
+    freqNum: $("freq-num"),
+    ledSignal: $("led-signal"),
+    ledWarn: $("led-warn"),
+    stageCanvas: $("stage-canvas"),
+    stageText: $("stage-text"),
+    spiritBar: $("spirit-bar"),
+    spiritNum: $("spirit-num"),
+    triesNum: $("tries-num"),
+    trinketSlot: $("trinket-slot"),
+    logContent: $("log-content"),
+    inputDisplay: $("input-display"),
+    keys: document.querySelectorAll(".key[data-k]"),
+    viewNumpad: $("view-numpad"),
+    viewBattle: $("view-battle"),
+    keypadGrid: $("keypad-grid"),
+    btnInv: $("btn-inv"),
+    fieldInv: $("field-inv"),
+    fieldInvBack: $("field-inv-back"),
+    fieldInvGrid: $("field-inv-grid"),
+    fieldInvAction: $("field-inv-action"),
+    fieldInvActionName: $("field-inv-action-name"),
+    battlePrompt: $("battle-prompt"),
+    battleActions: $("battle-actions"),
+    battleBtns: document.querySelectorAll(".battle-key[data-move]"),
+    itemList: $("item-list"),
+    itemBack: $("item-back"),
+    itemListGrid: $("item-list-grid"),
+    itemListAction: $("item-list-action"),
+    itemListActionName: $("item-list-action-name"),
+    endOverlay: $("end-overlay"),
+    endText: $("end-text"),
+    endStats: $("end-stats"),
+    restartBtn: $("btn-restart"),
+  };
+
+  const BAG_SIZE = 5;
+
+  /* ---------- 物品类型 ---------- */
+  function itemType(id) {
+    if (GAME_DATA.consumables[id]) return "consumable";
+    if (id === "fruit_knife") return "weapon";
+    return "trinket";
+  }
+  function itemName(id) {
+    const c = GAME_DATA.consumables[id];
+    if (c) return c.name;
+    const t = GAME_DATA.trinkets[id];
+    return t ? t.name : id;
+  }
+  function itemDesc(id) {
+    const c = GAME_DATA.consumables[id];
+    if (c) return c.desc;
+    const t = GAME_DATA.trinkets[id];
+    return t ? t.desc : "";
+  }
+  function itemIcon(id) {
+    const t = itemType(id);
+    if (t === "consumable") return "◆";
+    if (t === "weapon") return "⚔";
+    return "✦";
+  }
+
+  /* ---------- 游戏状态 ---------- */
+  let S = null;
+
+  function newState() {
+    return {
+      phase: "TITLE",
+      bossChannel: 0,
+      spirit: GAME_DATA.config.spiritMax,
+      tries: GAME_DATA.config.maxTries,
+      bag: [],
+      equipped: { weapon: null, trinket1: null, trinket2: null },
+      currentInput: "",
+      battle: null,
+      deathBy: "explore",   // explore(发疯) | battle(死亡)
+    };
+  }
+
+  function equippedList() {
+    const e = [];
+    if (S.equipped.weapon) e.push(S.equipped.weapon);
+    if (S.equipped.trinket1) e.push(S.equipped.trinket1);
+    if (S.equipped.trinket2) e.push(S.equipped.trinket2);
+    return e;
+  }
+
+  function spiritMax() {
+    let m = GAME_DATA.config.spiritMax;
+    equippedList().forEach((id) => {
+      const t = GAME_DATA.trinkets[id];
+      if (t && t.mods.spiritMax) m += t.mods.spiritMax;
+    });
+    return m;
+  }
+  function dmgReduce() {
+    let r = 0;
+    equippedList().forEach((id) => {
+      const t = GAME_DATA.trinkets[id];
+      if (t && t.mods.dmgReduce) r += t.mods.dmgReduce;
+    });
+    return Math.min(r, 0.8);
+  }
+  function spiritRegen() {
+    let r = 0;
+    equippedList().forEach((id) => {
+      const t = GAME_DATA.trinkets[id];
+      if (t && t.mods.spiritRegen) r += t.mods.spiritRegen;
+    });
+    return r;
+  }
+  function attackPower() {
+    let p = 1;
+    equippedList().forEach((id) => {
+      const t = GAME_DATA.trinkets[id];
+      if (t && t.mods.attackPower) p += t.mods.attackPower - 1;
+    });
+    return p;
+  }
+
+  function pick(key) {
+    const pool = GAME_DATA.TEXTS[key];
+    if (!pool || !pool.length) return "";
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  function log(text, type) {
+    // 去掉上一行的 latest
+    const old = el.logContent.querySelector(".latest");
+    if (old) old.classList.remove("latest");
+    const p = document.createElement("p");
+    p.className = "log-line latest" + (type ? " " + type : "");
+    p.textContent = text;
+    el.logContent.appendChild(p);
+    while (el.logContent.children.length > 3) {
+      el.logContent.removeChild(el.logContent.firstChild);
+    }
+  }
+
+  function updateHUD() {
+    const max = spiritMax();
+    el.spiritBar.style.width = Math.max(0, (S.spirit / max) * 100) + "%";
+    el.spiritNum.textContent = Math.max(0, S.spirit) + "/" + max;
+    el.triesNum.textContent = S.tries;
+    const eq = equippedList().map((id) => itemIcon(id) + itemName(id));
+    el.trinketSlot.textContent = eq.length ? eq.join(" ") : "—";
+  }
+
+  function setFreq(n) {
+    el.freqNum.textContent = String(n).padStart(3, "0");
+  }
+
+  function setLights(kind) {
+    S.lastLights = kind;
+    el.ledSignal.classList.remove("on-signal", "on-warn");
+    el.ledWarn.classList.remove("on-signal", "on-warn");
+    if (kind === "low") el.ledSignal.classList.add("on-warn");
+    else if (kind === "high") el.ledWarn.classList.add("on-warn");
+    else if (kind === "boss") {
+      el.ledSignal.classList.add("on-warn");
+      el.ledWarn.classList.add("on-warn");
+    }
+  }
+  function restoreLights() {
+    if (S && S.lastLights) setLights(S.lastLights);
+  }
+
+  function drawStatic(canvas, intensity) {
+    const ctx = canvas.getContext("2d");
+    const w = canvas.width, h = canvas.height;
+    const img = ctx.createImageData(w, h);
+    for (let i = 0; i < w * h; i++) {
+      const v = Math.random() * 255 * intensity;
+      img.data[i * 4] = v;
+      img.data[i * 4 + 1] = v;
+      img.data[i * 4 + 2] = v;
+      img.data[i * 4 + 3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+
+  function showSprite(src, fallbackText) {
+    const img = new Image();
+    img.onload = () => {
+      el.stageText.classList.add("hidden");
+      el.stageCanvas.classList.remove("hidden");
+      const ctx = el.stageCanvas.getContext("2d");
+      ctx.imageSmoothingEnabled = false;
+      ctx.clearRect(0, 0, el.stageCanvas.width, el.stageCanvas.height);
+      const cw = el.stageCanvas.width, ch = el.stageCanvas.height;
+      const scale = Math.min(cw / img.width, ch / img.height);
+      const dw = img.width * scale, dh = img.height * scale;
+      ctx.drawImage(img, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
+    };
+    img.onerror = () => {
+      el.stageCanvas.classList.add("hidden");
+      el.stageText.classList.remove("hidden");
+      el.stageText.textContent = fallbackText || "— 静 电 —";
+    };
+    img.src = src;
+  }
+
+  /* ---------- 背包 ---------- */
+  function addToBag(id) {
+    const type = itemType(id);
+    if (type === "consumable") {
+      const existing = S.bag.find((b) => b.id === id);
+      if (existing) { existing.count += 1; return true; }
+    }
+    if (S.bag.length >= BAG_SIZE) {
+      log("背包满了。", "system");
+      return false;
+    }
+    S.bag.push({ id, count: 1 });
+    return true;
+  }
+
+  function equipItem(bagIdx) {
+    const item = S.bag[bagIdx];
+    if (!item) return;
+    const type = itemType(item.id);
+    if (type === "consumable") return;
+    if (type === "weapon") {
+      const old = S.equipped.weapon;
+      S.equipped.weapon = item.id;
+      S.bag.splice(bagIdx, 1);
+      if (old) S.bag.push({ id: old, count: 1 });
+    } else {
+      if (!S.equipped.trinket1) {
+        S.equipped.trinket1 = item.id;
+        S.bag.splice(bagIdx, 1);
+      } else if (!S.equipped.trinket2) {
+        S.equipped.trinket2 = item.id;
+        S.bag.splice(bagIdx, 1);
+      } else {
+        const old = S.equipped.trinket1;
+        S.equipped.trinket1 = item.id;
+        S.bag.splice(bagIdx, 1);
+        S.bag.push({ id: old, count: 1 });
+      }
+    }
+    updateHUD();
+  }
+
+  function useItem(bagIdx) {
+    const item = S.bag[bagIdx];
+    if (!item || itemType(item.id) !== "consumable") return;
+    const c = GAME_DATA.consumables[item.id];
+    S.spirit = Math.min(spiritMax(), S.spirit + c.value);
+    item.count -= 1;
+    if (item.count <= 0) S.bag.splice(bagIdx, 1);
+    log(pick("use_item") + `${c.name}，精神 +${c.value}。`, "good");
+    updateHUD();
+  }
+
+  function dropItem(bagIdx) {
+    const item = S.bag[bagIdx];
+    if (!item) return;
+    log(`丢掉了 ${itemName(item.id)}。`, "system");
+    S.bag.splice(bagIdx, 1);
+  }
+
+  /* ---------- 物品栏 UI ---------- */
+  function renderBagGrid(gridEl) {
+    gridEl.innerHTML = "";
+    for (let i = 0; i < BAG_SIZE; i++) {
+      const slot = document.createElement("button");
+      const item = S.bag[i];
+      if (item) {
+        slot.className = "slot";
+        slot.innerHTML = `<div class="slot-icon">${itemIcon(item.id)}</div><div>${itemName(item.id)}</div>${item.count > 1 ? `<div>×${item.count}</div>` : ""}`;
+        slot.addEventListener("click", () => openItemAction(i, gridEl));
+      } else {
+        slot.className = "slot empty";
+        slot.textContent = "·";
+      }
+      gridEl.appendChild(slot);
+    }
+  }
+
+  function openItemAction(idx, gridEl) {
+    const item = S.bag[idx];
+    if (!item) return;
+    const type = itemType(item.id);
+    const isField = gridEl.id === "field-inv-grid";
+    const actionBox = isField ? el.fieldInvAction : el.itemListAction;
+    const actionName = isField ? el.fieldInvActionName : el.itemListActionName;
+    const grid = isField ? el.fieldInvGrid : el.itemListGrid;
+    const backBtn = isField ? el.fieldInvBack : el.itemBack;
+
+    grid.classList.add("hidden");
+    backBtn.classList.add("hidden");
+    actionBox.classList.remove("hidden");
+    actionName.textContent = `${itemName(item.id)} —— ${itemDesc(item.id)}`;
+
+    actionBox.querySelectorAll(".inv-act").forEach((b) => {
+      const act = b.dataset.act;
+      if (act === "use") b.style.display = type === "consumable" ? "" : "none";
+      if (act === "equip") b.style.display = type === "consumable" ? "none" : "";
+      b.onclick = () => {
+        if (act === "use") useItem(idx);
+        else if (act === "equip") equipItem(idx);
+        else if (act === "drop") dropItem(idx);
+        closeItemAction();
+      };
+    });
+  }
+
+  function closeItemAction() {
+    el.fieldInvAction.classList.add("hidden");
+    el.itemListAction.classList.add("hidden");
+    el.fieldInvGrid.classList.remove("hidden");
+    el.itemListGrid.classList.remove("hidden");
+    el.fieldInvBack.classList.remove("hidden");
+    el.itemBack.classList.remove("hidden");
+    renderBagGrid(el.fieldInvGrid);
+    renderBagGrid(el.itemListGrid);
+  }
+
+  /* ---------- 视图切换 ---------- */
+  function showNumpad() {
+    el.viewBattle.classList.add("hidden");
+    el.viewNumpad.classList.remove("hidden");
+    closeFieldInv();
+  }
+  function showBattlePad() {
+    el.viewNumpad.classList.add("hidden");
+    el.viewBattle.classList.remove("hidden");
+    showBattleActions();
+  }
+  function showBattleActions() {
+    el.itemList.classList.add("hidden");
+    el.battleActions.classList.remove("hidden");
+  }
+  function showItemList() {
+    el.battleActions.classList.add("hidden");
+    el.itemList.classList.remove("hidden");
+    closeItemAction();
+    renderBagGrid(el.itemListGrid);
+  }
+  function openFieldInv() {
+    if (S.phase !== "TUNING") return;
+    el.keypadGrid.classList.add("hidden");
+    el.fieldInv.classList.remove("hidden");
+    closeItemAction();
+    renderBagGrid(el.fieldInvGrid);
+  }
+  function closeFieldInv() {
+    el.fieldInv.classList.add("hidden");
+    el.keypadGrid.classList.remove("hidden");
+    closeItemAction();
+  }
+  function setKeysEnabled(on) {
+    el.keys.forEach((k) => (k.disabled = !on));
+    el.battleBtns.forEach((b) => (b.disabled = !on));
+    el.itemBack.disabled = !on;
+    el.btnInv.disabled = !on;
+  }
+
+  /* ---------- 开始 ---------- */
+  function startGame() {
+    S = newState();
+    S.phase = "TUNING";
+    S.bossChannel =
+      GAME_DATA.config.channelMin +
+      Math.floor(
+        Math.random() *
+          (GAME_DATA.config.channelMax - GAME_DATA.config.channelMin + 1)
+      );
+    el.titleScreen.classList.add("hidden");
+    el.endOverlay.classList.add("hidden");
+    el.logContent.innerHTML = "";
+    GAME_DATA.introLines.forEach((l) => log(l, "system"));
+    log(`仪器预热完毕。剩余 ${S.tries} 次调频。`, "system");
+    setFreq(0);
+    setLights(null);
+    showNumpad();
+    setInput("");
+    updateHUD();
+    drawStatic(el.stageCanvas, 0.3);
+    el.stageText.textContent = "— 静 电 —";
+    setKeysEnabled(true);
+  }
+
+  function setInput(str) {
+    S.currentInput = str;
+    el.inputDisplay.textContent = str.padEnd(3, "_").split("").join(" ");
+  }
+
+  function onKey(k) {
+    if (S.phase !== "TUNING") return;
+    if (!el.fieldInv.classList.contains("hidden")) return;
+    if (k === "clr") { setInput(""); return; }
+    if (k === "ent") { submitChannel(); return; }
+    if (S.currentInput.length >= 3) return;
+    setInput(S.currentInput + k);
+  }
+
+  /* ---------- 提交频道 ---------- */
+  function submitChannel() {
+    const n = parseInt(S.currentInput, 10);
+    if (isNaN(n) || n < GAME_DATA.config.channelMin || n > GAME_DATA.config.channelMax) {
+      log("仪器无法锁定这个频率。", "bad");
+      setInput("");
+      return;
+    }
+
+    S.phase = "RESOLVING";
+    setKeysEnabled(false);
+    setFreq(n);
+
+    S.tries -= 1;
+    S.spirit -= GAME_DATA.config.spiritPerTune;
+
+    log(pick("tune_in"), "system");
+
+    const regen = spiritRegen();
+    if (regen > 0) {
+      S.spirit = Math.min(spiritMax(), S.spirit + regen);
+      log(`矿石检波器震动，精神 +${regen}。`, "good");
+    }
+
+    if (n === S.bossChannel) {
+      setLights("boss");
+      log(pick("enc_boss"), "bad");
+      if (S.tries >= 8) {
+        addToBag("hunter_notebook");
+        log("★ 仪器掉出一本旧笔记。", "good");
+      }
+      startBattle(GAME_DATA.boss, true, false);
+    } else {
+      const isHigh = n > S.bossChannel;
+      setLights(isHigh ? "high" : "low");
+      log(pick(isHigh ? "too_high" : "too_low"), "system");
+      rollEncounter();
+    }
+
+    updateHUD();
+    checkGameOver();
+    if (S.phase === "RESOLVING") {
+      S.phase = "TUNING";
+      setKeysEnabled(true);
+      setInput("");
+      showNumpad();
+    }
+  }
+
+  function rollEncounter() {
+    if (Math.random() < GAME_DATA.config.normalChance) {
+      if (Math.random() < GAME_DATA.config.minibossChance) {
+        const m = pickRandom(GAME_DATA.minibosses);
+        log(pick("enc_miniboss"), "bad");
+        startBattle(m, false, true);
+      } else {
+        const m = pickRandom(GAME_DATA.monsters);
+        log(pick("enc_normal"), "system");
+        startBattle(m, false, false);
+      }
+    } else {
+      rollEvent();
+    }
+  }
+
+  function pickRandom(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  function rollEvent() {
+    const pool = GAME_DATA.events;
+    const totalW = pool.reduce((s, e) => s + e.weight, 0);
+    let r = Math.random() * totalW;
+    let picked = pool[0];
+    for (const e of pool) {
+      r -= e.weight;
+      if (r <= 0) { picked = e; break; }
+    }
+    log(picked.text, "system");
+    applyEventEffect(picked.effect);
+    setTimeout(() => {
+      if (S.phase === "RESOLVING") {
+        S.phase = "TUNING";
+        setKeysEnabled(true);
+        setInput("");
+        showNumpad();
+      }
+    }, 700);
+  }
+
+  function applyEventEffect(eff) {
+    if (!eff) return;
+    switch (eff.type) {
+      case "spirit":
+        S.spirit = Math.min(spiritMax(), S.spirit + eff.value);
+        break;
+      case "give_trinket":
+        if (addToBag(eff.trinket)) {
+          log(pick("get_trinket"), "good");
+          log(`★ ${itemName(eff.trinket)} —— ${itemDesc(eff.trinket)}`, "good");
+        }
+        break;
+      case "give_consumable":
+        if (addToBag(eff.item)) {
+          log(`· 捡到 ${itemName(eff.item)}`, "good");
+        }
+        break;
+      case "restore_tries":
+        S.tries += eff.value;
+        log(`调频机会 +${eff.value}。`, "good");
+        break;
+    }
+    updateHUD();
+  }
+
+  /* ---------- 战斗（概率制，非猜拳） ---------- */
+  function startBattle(monster, isBoss, isMiniboss) {
+    S.phase = "BATTLE";
+    S.battle = { monster, hp: monster.hp, isBoss, isMiniboss };
+    showBattlePad();
+    showSprite(monster.sprite, monster.name[0] + "？");
+    el.battlePrompt.textContent = monster.desc;
+    log(pick("enc_normal") || monster.desc, "system");
+    setKeysEnabled(true);
+  }
+
+  function battleMove(move) {
+    if (!S.battle || S.phase !== "BATTLE") return;
+    if (move === "item") { showItemList(); return; }
+    if (move === "flee") { doFlee(); return; }
+
+    setKeysEnabled(false);
+    const b = S.battle;
+    const m = b.monster;
+
+    // 怪物按AI权重选动作 [attack, defend, dodge]
+    const w = m.aiWeights;
+    const moves = ["attack", "defend", "dodge"];
+    const total = w[0] + w[1] + w[2];
+    let r = Math.random() * total;
+    let ai = "attack";
+    for (let i = 0; i < 3; i++) {
+      r -= w[i];
+      if (r <= 0) { ai = moves[i]; break; }
+    }
+
+    log(`你【${GAME_DATA.moves[move]}】，它【${GAME_DATA.moves[ai]}】。`, "system");
+
+    if (ai === "attack") {
+      // 怪物攻击你
+      if (move === "attack") {
+        // 硬碰硬：50/50
+        if (Math.random() < 0.5) {
+          b.hp -= attackPower();
+          log(pick(attackPower() > 1 ? "clash_win" : "clash_win_bare") + ` 它受了${attackPower()}下。`, "good");
+        } else {
+          let dmg = m.spiritDamage * (1 - dmgReduce());
+          dmg = Math.round(dmg);
+          S.spirit -= dmg;
+          S.deathBy = "battle";
+          log(pick("clash_lose") + `（精神 -${dmg}）`, "bad");
+        }
+      } else if (move === "defend") {
+        // 防御：70%防住扣2，30%全扣
+        if (Math.random() < 0.7) {
+          S.spirit = Math.max(0, S.spirit - 2);
+          S.deathBy = "battle";
+          log(pick("defend_ok") + " 精神 -2。", "system");
+        } else {
+          let dmg = m.spiritDamage * (1 - dmgReduce());
+          dmg = Math.round(dmg);
+          S.spirit -= dmg;
+          S.deathBy = "battle";
+          log(pick("defend_fail") + `（精神 -${dmg}）`, "bad");
+        }
+      } else if (move === "dodge") {
+        // 闪避：60%闪开+3精神，40%全扣
+        if (Math.random() < 0.6) {
+          S.spirit = Math.min(spiritMax(), S.spirit + 3);
+          log(pick("dodge_ok") + " 精神 +3。", "good");
+        } else {
+          let dmg = m.spiritDamage * (1 - dmgReduce());
+          dmg = Math.round(dmg);
+          S.spirit -= dmg;
+          S.deathBy = "battle";
+          log(pick("dodge_fail") + `（精神 -${dmg}）`, "bad");
+        }
+      }
+    } else if (ai === "defend") {
+      // 怪物防御
+      if (move === "attack") {
+        log(pick("blocked"), "system");
+      } else if (move === "defend") {
+        log(pick("round_draw"), "system");
+      } else {
+        S.spirit = Math.min(spiritMax(), S.spirit + 3);
+        log(pick("dodge_ok") + " 精神 +3。", "good");
+      }
+    } else {
+      // 怪物闪避
+      if (move === "attack") {
+        b.hp -= attackPower();
+        log(pick(attackPower() > 1 ? "hit_foe" : "hit_foe_bare") + ` 它受了${attackPower()}下。`, "good");
+      } else if (move === "defend") {
+        S.spirit = Math.min(spiritMax(), S.spirit + 2);
+        log(pick("defend_ok") + " 精神 +2。", "good");
+      } else {
+        log(pick("round_draw"), "system");
+      }
+    }
+
+    updateHUD();
+    checkGameOver();
+    if (S.phase === "END") return;
+
+    if (b.hp <= 0) {
+      endBattleWin();
+      return;
+    }
+    setTimeout(() => setKeysEnabled(true), 300);
+  }
+
+  function doFlee() {
+    setKeysEnabled(false);
+    S.spirit -= 10;
+    S.deathBy = "explore";
+    log(pick("flee") + "（精神 -10）", "bad");
+    S.battle = null;
+    S.phase = "TUNING";
+    showNumpad();
+    setInput("");
+    drawStatic(el.stageCanvas, 0.3);
+    el.stageText.textContent = "— 静 电 —";
+    setKeysEnabled(true);
+    updateHUD();
+    checkGameOver();
+    if (S.phase !== "END") setKeysEnabled(true);
+    restoreLights();
+  }
+
+  function endBattleWin() {
+    const b = S.battle;
+    const m = b.monster;
+
+    if (b.isBoss) {
+      S.battle = null;
+      gameOver("win");
+      return;
+    }
+
+    log(pick(b.isMiniboss ? "kill_miniboss" : "kill_normal"), "good");
+
+    if (Math.random() < m.trinketChance) {
+      const tid = m.trinkets[Math.floor(Math.random() * m.trinkets.length)];
+      if (addToBag(tid)) {
+        log(pick("get_trinket"), "good");
+        log(`★ ${itemName(tid)} —— ${itemDesc(tid)}`, "good");
+      }
+    }
+    if (Math.random() < 0.3) {
+      const ids = Object.keys(GAME_DATA.consumables);
+      addToBag(ids[Math.floor(Math.random() * ids.length)]);
+    }
+
+    S.battle = null;
+
+    S.phase = "TUNING";
+    showNumpad();
+    setInput("");
+    drawStatic(el.stageCanvas, 0.3);
+    el.stageText.textContent = "— 静 电 —";
+    setKeysEnabled(true);
+    updateHUD();
+    checkGameOver();
+    restoreLights();
+  }
+
+  function checkGameOver() {
+    if (S.spirit <= 0) {
+      gameOver(S.deathBy === "battle" ? "death" : "crazy");
+      return;
+    }
+    if (S.tries <= 0 && S.phase !== "BATTLE") {
+      gameOver("lost");
+    }
+  }
+
+  function gameOver(kind) {
+    S.phase = "END";
+    setKeysEnabled(false);
+    let lines = [];
+    if (kind === "win") lines = GAME_DATA.endingWin;
+    else if (kind === "death") lines = GAME_DATA.endingDeath;
+    else if (kind === "crazy") lines = GAME_DATA.endingLoseSpirit;
+    else lines = GAME_DATA.endingLoseTries;
+
+    el.endText.textContent = lines.join("\n");
+    const eq = equippedList().map(itemName);
+    el.endStats.innerHTML =
+      `目标频道：CH ${String(S.bossChannel).padStart(3, "0")}<br>` +
+      `剩余次数：${S.tries}<br>` +
+      `剩余精神：${Math.max(0, S.spirit)}<br>` +
+      `已装备：${eq.join("、") || "无"}`;
+    el.endOverlay.classList.remove("hidden");
+  }
+
+  /* ---------- 事件绑定 ---------- */
+  el.startBtn.addEventListener("click", startGame);
+  el.restartBtn.addEventListener("click", startGame);
+  el.keys.forEach((k) => k.addEventListener("click", () => onKey(k.dataset.k)));
+  el.battleBtns.forEach((b) => b.addEventListener("click", () => battleMove(b.dataset.move)));
+  el.itemBack.addEventListener("click", showBattleActions);
+  el.btnInv.addEventListener("click", openFieldInv);
+  el.fieldInvBack.addEventListener("click", closeFieldInv);
+
+  document.addEventListener("keydown", (e) => {
+    if (!S) return;
+    if (S.phase === "TUNING") {
+      if (!el.fieldInv.classList.contains("hidden")) return;
+      if (/^[0-9]$/.test(e.key)) onKey(e.key);
+      else if (e.key === "Backspace") onKey("clr");
+      else if (e.key === "Enter") onKey("ent");
+    } else if (S.phase === "BATTLE") {
+      if (e.key === "1") battleMove("attack");
+      if (e.key === "2") battleMove("defend");
+      if (e.key === "3") battleMove("dodge");
+      if (e.key === "4") battleMove("item");
+      if (e.key === "5") battleMove("flee");
+    }
+  });
+
+  drawStatic(el.stageCanvas, 0.2);
+})();
+

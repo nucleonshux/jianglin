@@ -1,0 +1,148 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>降临 DESCENT</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ===== 开始 / 标题画面 ===== -->
+<div id="title-screen" class="overlay">
+  <div class="title-art">
+    <div class="title-logo">降 临</div>
+    <div class="title-sub">D E S C E N T</div>
+    <div class="title-story">
+      它没有名字。<br>
+      它只是从静电的深处，缓缓靠近。<br>
+      拧动你的收音机——<br>
+      在一百个频道里，找到它。
+    </div>
+    <button id="btn-start" class="px-btn">▶ 开始调频</button>
+  </div>
+</div>
+
+<!-- ===== 主游戏画面 ===== -->
+<div id="device">
+
+  <!-- 屏幕区（黑框） -->
+  <div id="screen">
+    <div id="screen-top">
+      <div id="freq-display">
+        <span class="freq-label">CH</span>
+        <span id="freq-num">000</span>
+      </div>
+      <div id="indicators">
+        <div class="led" id="led-signal"></div>
+        <div class="led" id="led-warn"></div>
+      </div>
+    </div>
+
+    <!-- 舞台：怪物 / 事件 / 道具图像占位 -->
+    <div id="stage">
+      <canvas id="stage-canvas" width="160" height="120"></canvas>
+      <div id="stage-text" class="hidden">— 静 电 —</div>
+    </div>
+
+    <!-- HUD：精神值 / 剩余次数 / 装备 -->
+    <div id="hud">
+      <div class="hud-row">
+        <span class="hud-label">精神</span>
+        <span class="bar"><span id="spirit-bar" class="bar-fill"></span></span>
+        <span id="spirit-num">100</span>
+      </div>
+      <div class="hud-row">
+        <span class="hud-label">次数</span>
+        <span id="tries-num">10</span>
+        <span class="hud-label">装备</span>
+        <span id="trinket-slot">—</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 文字描述区（蓝条） -->
+  <div id="log">
+    <div id="log-content">
+      <p class="log-line">收音机里传来滋滋的电流声。</p>
+    </div>
+  </div>
+
+  <!-- 数字键盘区（红框）—— 平时是数字键盘，战斗时切成动作按钮 -->
+  <div id="keypad">
+    <!-- 数字键盘视图 -->
+    <div id="view-numpad">
+      <div id="keypad-input">
+        <span id="input-display">_ _ _</span>
+        <button id="btn-inv" class="mini-btn">物品</button>
+      </div>
+      <div id="keypad-grid">
+        <button class="key" data-k="1">1</button>
+        <button class="key" data-k="2">2</button>
+        <button class="key" data-k="3">3</button>
+        <button class="key" data-k="4">4</button>
+        <button class="key" data-k="5">5</button>
+        <button class="key" data-k="6">6</button>
+        <button class="key" data-k="7">7</button>
+        <button class="key" data-k="8">8</button>
+        <button class="key" data-k="9">9</button>
+        <button class="key key-fn" data-k="clr">CLR</button>
+        <button class="key" data-k="0">0</button>
+        <button class="key key-fn" data-k="ent">OK</button>
+      </div>
+      <div id="field-inv" class="hidden">
+        <div id="field-inv-title">— 物品栏 —</div>
+        <div id="field-inv-grid"></div>
+        <div id="field-inv-action" class="hidden">
+          <div id="field-inv-action-name"></div>
+          <button class="key battle-key inv-act" data-act="use">使 用</button>
+          <button class="key battle-key inv-act" data-act="equip">装 备</button>
+          <button class="key battle-key inv-act" data-act="drop">丢 弃</button>
+          <button class="key key-fn inv-act" data-act="back">← 返回</button>
+        </div>
+        <button class="key key-fn" id="field-inv-back">← 返回</button>
+      </div>
+    </div>
+
+    <!-- 战斗动作视图 -->
+    <div id="view-battle" class="hidden">
+      <div id="battle-prompt">它在等你先动。</div>
+      <div id="battle-actions">
+        <button class="key battle-key" data-move="attack">攻 击</button>
+        <button class="key battle-key" data-move="defend">防 御</button>
+        <button class="key battle-key" data-move="dodge">闪 避</button>
+        <button class="key battle-key" data-move="item">物 品</button>
+        <button class="key battle-key" data-move="flee">逃 跑</button>
+      </div>
+      <div id="item-list" class="hidden">
+        <div id="item-list-title">— 物品栏 —</div>
+        <div id="item-list-grid"></div>
+        <div id="item-list-action" class="hidden">
+          <div id="item-list-action-name"></div>
+          <button class="key battle-key inv-act" data-act="use">使 用</button>
+          <button class="key battle-key inv-act" data-act="equip">装 备</button>
+          <button class="key battle-key inv-act" data-act="drop">丢 弃</button>
+          <button class="key key-fn inv-act" data-act="back">← 返回</button>
+        </div>
+        <button class="key battle-key" id="item-back">← 返回</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== 结算画面 ===== -->
+<div id="end-overlay" class="overlay hidden">
+  <div id="end-box">
+    <div id="end-title">— 沉 默 —</div>
+    <div id="end-text"></div>
+    <div id="end-stats"></div>
+    <button id="btn-restart" class="px-btn">↻ 再次调频</button>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
+
