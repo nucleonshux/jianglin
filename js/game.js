@@ -831,8 +831,7 @@
           const atk = performAttack();
           if (!atk.whiffed) {
             b.hp -= atk.dmg;
-            const dmgTxt = atk.dmg >= 3 ? "三下" : atk.dmg === 2 ? "两下" : "一下";
-            log(pick(atk.dmg > 1 ? "clash_win" : "clash_win_bare") + `（${dmgTxt}） ${atk.extraMsg}`, "good");
+            log(pick(atk.dmg > 1 ? "clash_win" : "clash_win_bare") + ` ${atk.extraMsg}`, "good");
           } else {
             log(pick("clash_win_bare") + " 它退了一步，但你没打中。", "system");
           }
@@ -885,8 +884,7 @@
         const atk = performAttack();
         if (!atk.whiffed) {
           b.hp -= atk.dmg;
-          const dmgTxt = atk.dmg >= 3 ? "三下" : atk.dmg === 2 ? "两下" : "一下";
-          log(pick(atk.dmg > 1 ? "hit_foe" : "hit_foe_bare") + `（${dmgTxt}） ${atk.extraMsg}`, "good");
+          log(pick(atk.dmg > 1 ? "hit_foe" : "hit_foe_bare") + ` ${atk.extraMsg}`, "good");
         } else {
           log(pick("miss"), "system");
         }
