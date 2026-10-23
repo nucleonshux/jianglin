@@ -308,8 +308,9 @@ const GAME_DATA = {
     },
     old_mic: {
       name: "旧麦克风",
-      desc: "每打赢一场怪，精神 +4。",
-      mods: { healOnKill: 4 },
+      desc: "广播员的东西。1倍伤害，每次命中回2精神。",
+      mods: {},
+      weapon: { base: 1, spiritOnHit: 2 },
     },
     giant_knuckle: {
       name: "巨像的指节",
