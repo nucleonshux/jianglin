@@ -313,7 +313,7 @@ const GAME_DATA = {
       weapon: { base: 1, spiritOnHit: 2 },
     },
     giant_knuckle: {
-      name: "巨像的指节",
+      name: "巨像的手",
       desc: "空手攻击伤害 +1。",
       mods: { bareBonus: 1 },
     },

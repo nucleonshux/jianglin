@@ -88,7 +88,7 @@
       spirit: GAME_DATA.config.spiritMax,
       tries: GAME_DATA.config.maxTries,
       bag: [],
-      equipped: { weapon: null, trinket1: null, trinket2: null },
+      equipped: { weapon1: null, weapon2: null, trinket1: null, trinket2: null },
       currentInput: "",
       battle: null,
       deathBy: "explore",   // explore(发疯) | battle(死亡)
@@ -102,7 +102,8 @@
 
   function equippedList() {
     const e = [];
-    if (S.equipped.weapon) e.push(S.equipped.weapon);
+    if (S.equipped.weapon1) e.push(S.equipped.weapon1);
+    if (S.equipped.weapon2) e.push(S.equipped.weapon2);
     if (S.equipped.trinket1) e.push(S.equipped.trinket1);
     if (S.equipped.trinket2) e.push(S.equipped.trinket2);
     return e;
@@ -132,48 +133,56 @@
     });
     return r;
   }
-  function currentWeapon() {
-    if (!S.equipped.weapon) return null;
-    return GAME_DATA.trinkets[S.equipped.weapon];
+  function currentWeapons() {
+    const w = [];
+    if (S.equipped.weapon1) w.push(GAME_DATA.trinkets[S.equipped.weapon1]);
+    if (S.equipped.weapon2) w.push(GAME_DATA.trinkets[S.equipped.weapon2]);
+    return w;
   }
 
   function performAttack() {
     // 返回 { dmg, extraMsg, whiffed }
-    const w = currentWeapon();
-    if (!w || !w.weapon) {
+    const weapons = currentWeapons();
+    if (weapons.length === 0) {
       let dmg = 1;
-      // 巨像指节：空手+1
       const hasKnuckle = equippedList().includes("giant_knuckle");
       if (hasKnuckle) dmg += 1;
       return { dmg, extraMsg: "", whiffed: false };
     }
-    const spec = w.weapon;
-    // 扳手挥空（第三只眼免疫）
     const noWhiff = equippedList().some((id) => {
       const t = GAME_DATA.trinkets[id];
       return t && t.mods && t.mods.noWhiff;
     });
-    if (spec.whiff && !noWhiff && Math.random() < spec.whiff) {
+    let totalDmg = 0;
+    let msg = "";
+    let anyWhiff = false;
+    let allWhiff = true;
+    for (const w of weapons) {
+      const spec = w.weapon;
+      if (spec.whiff && !noWhiff && Math.random() < spec.whiff) {
+        anyWhiff = true;
+        continue;
+      }
+      allWhiff = false;
+      let d = spec.base;
+      if (spec.comboChance && Math.random() < spec.comboChance) {
+        d *= 2;
+        msg += "连击！";
+      }
+      if (spec.backfire && Math.random() < spec.backfire) {
+        S.spirit = Math.max(0, S.spirit - 2);
+        msg += "割到了自己。";
+      }
+      if (spec.spiritOnHit) {
+        S.spirit = Math.min(spiritMax(), S.spirit + spec.spiritOnHit);
+        msg += `精神 +${spec.spiritOnHit}。`;
+      }
+      totalDmg += d;
+    }
+    if (allWhiff) {
       return { dmg: 0, extraMsg: "但你挥空了。", whiffed: true };
     }
-    let dmg = spec.base;
-    let msg = "";
-    // 水果刀连击
-    if (spec.comboChance && Math.random() < spec.comboChance) {
-      dmg *= 2;
-      msg = "连击！";
-    }
-    // 玻璃碎片割手
-    if (spec.backfire && Math.random() < spec.backfire) {
-      S.spirit = Math.max(0, S.spirit - 2);
-      msg = "割到了自己。";
-    }
-    // 音叉回精神
-    if (spec.spiritOnHit) {
-      S.spirit = Math.min(spiritMax(), S.spirit + spec.spiritOnHit);
-      msg = `精神 +${spec.spiritOnHit}。`;
-    }
-    return { dmg, extraMsg: msg, whiffed: false };
+    return { dmg: totalDmg, extraMsg: msg, whiffed: false };
   }
 
   function pick(key) {
@@ -263,7 +272,8 @@
 
   /* ---------- 背包 ---------- */
   function hasItem(id) {
-    if (S.equipped.weapon === id) return true;
+    if (S.equipped.weapon1 === id) return true;
+    if (S.equipped.weapon2 === id) return true;
     if (S.equipped.trinket1 === id) return true;
     if (S.equipped.trinket2 === id) return true;
     return S.bag.some((b) => b.id === id);
@@ -310,10 +320,27 @@
     const type = itemType(item.id);
     if (type === "consumable") return;
     if (type === "weapon") {
-      const old = S.equipped.weapon;
-      S.equipped.weapon = item.id;
-      S.bag.splice(bagIdx, 1);
-      if (old) S.bag.push({ id: old, count: 1 });
+      if (!S.equipped.weapon1) {
+        S.equipped.weapon1 = item.id;
+        S.bag.splice(bagIdx, 1);
+      } else if (!S.equipped.weapon2) {
+        S.equipped.weapon2 = item.id;
+        S.bag.splice(bagIdx, 1);
+      } else {
+        const choice = window.prompt(
+          `替换哪把武器？\n1. ${itemName(S.equipped.weapon1)}\n2. ${itemName(S.equipped.weapon2)}\n输入 1 或 2：`
+        );
+        if (choice === "1" || choice === "2") {
+          const slot = choice === "1" ? "weapon1" : "weapon2";
+          const old = S.equipped[slot];
+          S.equipped[slot] = item.id;
+          S.bag.splice(bagIdx, 1);
+          if (old) S.bag.push({ id: old, count: 1 });
+        } else {
+          log("取消装备。", "system");
+          return;
+        }
+      }
       updateHUD();
       return;
     }
