@@ -995,7 +995,9 @@
     }
     if (Math.random() < 0.4) {
       const ids = Object.keys(GAME_DATA.consumables);
-      addToBag(ids[Math.floor(Math.random() * ids.length)]);
+      const id = ids[Math.floor(Math.random() * ids.length)];
+      addToBag(id);
+      log(`· 你捡到了 ${itemName(id)}`, "good");
     }
 
     S.battle = null;
