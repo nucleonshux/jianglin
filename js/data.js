@@ -9,10 +9,10 @@ const GAME_DATA = {
     channelMin: 1,
     channelMax: 100,
     maxTries: 10,
-    spiritMax: 120,
-    spiritPerTune: 8,
-    normalChance: 0.55,
-    minibossChance: 0.12,
+    spiritMax: 100,
+    spiritPerTune: 10,
+    normalChance: 0.7,
+    minibossChance: 0.15,
   },
 
   /* ---------- 开头 / 结局文案 ---------- */
@@ -164,8 +164,8 @@ const GAME_DATA = {
   events: [
     { weight: 2, text: "这里是海边。浪声一下一下，像有人在极远处替你数呼吸。你忘了刚才在怕什么。", effect: { type: "spirit", value: 10 } },
     { weight: 2, text: "一张破沙发。弹簧扎人，但你还是坐了一会儿。有人在这上面等过谁。", effect: { type: "spirit", value: 8 } },
-    { weight: 1, text: "电话亭里的电话在响。听筒里是你自己的声音，在叫你的名字。你挂了。", effect: { type: "spirit", value: -5 } },
-    { weight: 1, text: "黑板上用粉笔写着你的名字。你擦了一半，发现另一半是用你自己的笔迹写的。", effect: { type: "spirit", value: -10 } },
+    { weight: 1, text: "电话亭里的电话在响。听筒旁挂着一副旧耳机，海绵都烂了。你把它揣进了口袋。", effect: { type: "give_trinket", trinket: "old_headphones" } },
+    { weight: 1, text: "黑板上用粉笔写着你的名字。你擦了一半，发现另一半是用你自己的笔迹写的。地上有一卷黑胶布。", effect: { type: "give_trinket", trinket: "black_tape" } },
     { weight: 2, text: "自动售货机嗡嗡作响。掉出一罐冰可乐，拉环上有牙印。", effect: { type: "give_consumable", item: "water" } },
     { weight: 2, text: "公园长椅。树叶的影子在你手背上走。你闭了一会儿眼。", effect: { type: "spirit", value: 15 } },
     { weight: 1, text: "走廊很长，消毒水味。尽头有一扇门，门后有人在叫你小时候的乳名。你没走过去。", effect: { type: "spirit", value: -8 } },
@@ -176,7 +176,7 @@ const GAME_DATA = {
     { weight: 1, text: "照片里所有人都在看你身后。你没有回头。你不敢。", effect: { type: "spirit", value: -10 } },
     { weight: 2, text: "面包店刚开门。玻璃后面的人对你点了点头，像认识你很久了。", effect: { type: "give_consumable", item: "cracker" } },
     { weight: 1, text: "银幕上在放你的一天。观众席有人在笑，有人在哭。你不知道该坐哪边。", effect: { type: "spirit", value: -8 } },
-    { weight: 2, text: "热水浇下来。你低头看自己的手，手指正在变透明。你洗了很久。", effect: { type: "spirit", value: 15 } },
+    { weight: 2, text: "热水浇下来。你低头看自己的手，手指正在变透明。淋浴间地上有一卷脏绷带。", effect: { type: "give_trinket", trinket: "dirty_bandage" } },
     { weight: 1, text: "空售货机。你拍了一下，掉出一枚硬币——是你小时候丢的那枚。", effect: { type: "restore_tries", value: 1 } },
     { weight: 1, text: "一块空碑。上面没名字，却摆着一束还新鲜的花。你站了一会儿。", effect: { type: "spirit", value: 5 } },
     { weight: 1, text: "镜子里的你慢了半拍。你笑，它没笑。你移开了视线。", effect: { type: "spirit", value: -12 } },
@@ -241,6 +241,21 @@ const GAME_DATA = {
       name: "静电心脏",
       desc: "BOSS 掉落。它在你胸腔里跳动，频率和它一样。",
       mods: { spiritMax: 30, dmgReduce: 0.3 },
+    },
+    old_headphones: {
+      name: "旧耳机",
+      desc: "逃跑不扣精神。",
+      mods: { fleeNoPenalty: true },
+    },
+    dirty_bandage: {
+      name: "脏绷带",
+      desc: "每打赢一场怪，精神 +3。",
+      mods: { healOnKill: 3 },
+    },
+    black_tape: {
+      name: "黑胶布",
+      desc: "精神上限 +10，减伤 10%。",
+      mods: { spiritMax: 10, dmgReduce: 0.1 },
     },
   },
 

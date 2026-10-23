@@ -716,9 +716,17 @@
 
   function doFlee() {
     setKeysEnabled(false);
-    S.spirit -= 10;
-    S.deathBy = "explore";
-    log(pick("flee") + "（精神 -10）", "bad");
+    const noPenalty = equippedList().some((id) => {
+      const t = GAME_DATA.trinkets[id];
+      return t && t.mods && t.mods.fleeNoPenalty;
+    });
+    if (noPenalty) {
+      log(pick("flee") + "（耳机里的静电盖住了脚步声）", "system");
+    } else {
+      S.spirit -= 10;
+      S.deathBy = "explore";
+      log(pick("flee") + "（精神 -10）", "bad");
+    }
     S.battle = null;
     S.phase = "TUNING";
     showNumpad();
@@ -743,6 +751,15 @@
     }
 
     log(pick(b.isMiniboss ? "kill_miniboss" : "kill_normal"), "good");
+
+    // 脏绷带：击杀回精神
+    equippedList().forEach((id) => {
+      const t = GAME_DATA.trinkets[id];
+      if (t && t.mods && t.mods.healOnKill) {
+        S.spirit = Math.min(spiritMax(), S.spirit + t.mods.healOnKill);
+        log(`（绷带渗血，精神 +${t.mods.healOnKill}）`, "good");
+      }
+    });
 
     // 饰品掉落：只掉没拥有过的
     if (Math.random() < m.trinketChance) {
