@@ -164,12 +164,12 @@ const GAME_DATA = {
 
   /* ---------- 随机事件（直接执行，20个） ---------- */
   events: [
-    // 无选择，直接发生
-    { weight: 1, text: "这里是海边。浪声一下一下，像有人在极远处替你数呼吸。你忘了刚才在怕什么。", effect: { type: "spirit", value: 10 }, luck: 2 },
-    { weight: 1, text: "一张破沙发。弹簧扎人，但你还是坐了一会儿。有人在这上面等过谁。", effect: { type: "spirit", value: 8 }, luck: 1 },
-    { weight: 2, text: "公园长椅。树叶的影子在你手背上走。你闭了一会儿眼。", effect: { type: "spirit", value: 12 }, luck: 2 },
-    { weight: 2, text: "雨打在窗户上。你听着听着，忘了自己为什么在这里。", effect: { type: "spirit", value: 10 }, luck: 1 },
-    { weight: 2, text: "楼道灯坏了。你摸着黑走，脚下是自己的家。", effect: { type: "spirit", value: 6 }, luck: 1 },
+    // 无选择，直接发生（小事件）
+    { weight: 1, text: "这里是海边。浪声一下一下，像有人在极远处替你数呼吸。你忘了刚才在怕什么。", effect: { type: "spirit", value: 5 }, luck: 2 },
+    { weight: 1, text: "一张破沙发。弹簧扎人，但你还是坐了一会儿。有人在这上面等过谁。", effect: { type: "spirit", value: 3 }, luck: 1 },
+    { weight: 2, text: "公园长椅。树叶的影子在你手背上走。你闭了一会儿眼。", effect: { type: "spirit", value: 4 }, luck: 2 },
+    { weight: 2, text: "雨打在窗户上。你听着听着，忘了自己为什么在这里。", effect: { type: "spirit", value: 4 }, luck: 1 },
+    { weight: 2, text: "楼道灯坏了。你摸着黑走，脚下是自己的家。", effect: { type: "spirit", value: 3 }, luck: 1 },
 
     // 有选择
     { weight: 2, text: "自动售货机嗡嗡响。投币口卡着一罐东西。", options: [
