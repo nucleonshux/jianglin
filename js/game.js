@@ -695,8 +695,6 @@
     el.eventOptions.innerHTML = "";
     const btn = document.createElement("button");
     btn.className = "px-btn";
-    btn.style.display = "block";
-    btn.style.margin = "12px auto 0";
     btn.textContent = "继 续";
     btn.addEventListener("click", () => {
       el.eventOverlay.classList.add("hidden");
@@ -713,11 +711,10 @@
 
   function showEventChoice(ev) {
     el.eventText.textContent = ev.text;
-    el.eventOptions.innerHTML = "";    ev.options.forEach((opt) => {
+    el.eventOptions.innerHTML = "";
+    ev.options.forEach((opt) => {
       const btn = document.createElement("button");
       btn.className = "px-btn";
-      btn.style.display = "block";
-      btn.style.margin = "8px 0";
       btn.textContent = opt.label;
       btn.addEventListener("click", () => resolveEventChoice(opt));
       el.eventOptions.appendChild(btn);
