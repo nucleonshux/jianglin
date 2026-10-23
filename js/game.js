@@ -94,6 +94,9 @@
       deathBy: "explore",   // explore(发疯) | battle(死亡)
       luck: 50,            // 隐藏幸运值 0-100
       timesTuned: 0,       // 已调频次数
+      usedEvents: [],      // 已出现过的事件
+      proximityMode: false, // 打败第5次小BOSS后进入近远模式
+      lightsBroken: false,  // 打败第8次小BOSS后灯坏了
     };
   }
 
@@ -528,9 +531,19 @@
       }
       startBattle(GAME_DATA.boss, true, false);
     } else {
-      const isHigh = n > S.bossChannel;
-      setLights(isHigh ? "high" : "low");
-      log(pick(isHigh ? "too_high" : "too_low"), "system");
+      if (S.lightsBroken) {
+        setLights(null);
+        log("仪器好像被摔坏了，指示灯不亮了。", "bad");
+      } else if (S.proximityMode) {
+        const dist = Math.abs(n - S.bossChannel);
+        const near = dist < 15;
+        setLights(near ? "low" : "high"); // 左=近，右=远
+        log(near ? "（离它近了）" : "（离它远了）", "system");
+      } else {
+        const isHigh = n > S.bossChannel;
+        setLights(isHigh ? "high" : "low");
+        log(pick(isHigh ? "too_high" : "too_low"), "system");
+      }
       rollEncounter();
     }
 
@@ -568,6 +581,17 @@
       const m = pickRandom(GAME_DATA.monsters);
       log(pick("enc_normal"), "system");
       startBattle(m, false, false);
+    } else if (Math.random() < 0.3) {
+      // 空频道
+      log("这个频道是空的。你站在一片不存在的空间里，什么也没发生。", "system");
+      setTimeout(() => {
+        if (S.phase === "RESOLVING") {
+          S.phase = "TUNING";
+          setKeysEnabled(true);
+          setInput("");
+          showNumpad();
+        }
+      }, 900);
     } else {
       rollEvent();
     }
@@ -578,7 +602,20 @@
   }
 
   function rollEvent() {
-    const pool = GAME_DATA.events;
+    // 过滤已用过的事件
+    const pool = GAME_DATA.events.filter((e) => !S.usedEvents.includes(e.text));
+    if (pool.length === 0) {
+      log("这里什么都没有。只有静电。", "system");
+      setTimeout(() => {
+        if (S.phase === "RESOLVING") {
+          S.phase = "TUNING";
+          setKeysEnabled(true);
+          setInput("");
+          showNumpad();
+        }
+      }, 900);
+      return;
+    }
     const totalW = pool.reduce((s, e) => s + e.weight, 0);
     let r = Math.random() * totalW;
     let picked = pool[0];
@@ -586,6 +623,7 @@
       r -= e.weight;
       if (r <= 0) { picked = e; break; }
     }
+    S.usedEvents.push(picked.text);
 
     if (picked.options) {
       // 选择式事件
@@ -608,7 +646,7 @@
   }
 
   function showEventChoice(ev) {
-    el.eventText.textContent = "";
+    el.eventText.textContent = ev.text;
     el.eventOptions.innerHTML = "";
     ev.options.forEach((opt) => {
       const btn = document.createElement("button");
@@ -644,7 +682,12 @@
     }
     if (result.give) {
       addToBag(result.give);
-      log(`★ ${itemName(result.give)} —— ${itemDesc(result.give)}`, "good");
+      const type = itemType(result.give);
+      if (type === "consumable") {
+        log(`· 你捡到了 ${itemName(result.give)}（${itemDesc(result.give)}）`, "good");
+      } else {
+        log(`★ ${itemName(result.give)} —— ${itemDesc(result.give)}`, "good");
+      }
     }
     updateHUD();
     setTimeout(() => {
@@ -847,6 +890,17 @@
     }
 
     log(pick(b.isMiniboss ? "kill_miniboss" : "kill_normal"), "good");
+
+    // 小BOSS击杀后切换灯模式
+    if (b.isMiniboss) {
+      if (S.timesTuned === 5) {
+        S.proximityMode = true;
+        log("仪器的指示灯变了。现在它只告诉你离它近了还是远了。", "system");
+      } else if (S.timesTuned === 8) {
+        S.lightsBroken = true;
+        log("你把巨像砸烂的瞬间，仪器短路了。灯再也不亮了。", "bad");
+      }
+    }
 
     // 脏绷带：击杀回精神
     equippedList().forEach((id) => {
