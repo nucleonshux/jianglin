@@ -663,10 +663,21 @@
       log(picked.text, "system");
       showEventChoice(picked);
     } else {
-      // 直接事件
-      log(picked.text, "system");
-      applyEventEffect(picked.effect);
+      // 直接事件：事件文本和效果合并显示
+      const eff = picked.effect;
+      let suffix = "";
+      if (eff && eff.type === "spirit") {
+        const before = S.spirit;
+        S.spirit = Math.min(spiritMax(), S.spirit + eff.value);
+        const actual = S.spirit - before;
+        if (actual > 0) suffix = `（精神 +${actual}）`;
+        else if (actual < 0) suffix = `（精神 ${actual}）`;
+      } else if (eff) {
+        applyEventEffect(eff);
+      }
       if (picked.luck) S.luck += picked.luck;
+      log(picked.text + (suffix ? " " + suffix : ""), "system");
+      updateHUD();
       setTimeout(() => {
         if (S.phase === "RESOLVING") {
           S.phase = "TUNING";
