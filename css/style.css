@@ -413,6 +413,8 @@ html, body {
   color: #fff;
 }
 #battle-foe-name { font-size: 14px; color: #aaa; margin-bottom: 8px; letter-spacing: 2px; }
+#event-text { font-size: 13px; color: #ccc; margin-bottom: 12px; line-height: 1.5; word-break: break-all; }
+#event-options button { font-size: 13px; padding: 8px; }
 #battle-foe-sprite {
   background: #000;
   border: 2px solid #333;

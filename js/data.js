@@ -171,56 +171,56 @@ const GAME_DATA = {
 
     // 有选择
     { weight: 2, text: "自动售货机嗡嗡响。投币口卡着一罐东西。", options: [
-      { label: "伸手去够", ok: {spirit: 10, give: "water"}, bad: {spirit: -8}, luckMod: 0.1 },
-      { label: "拍一下机器", ok: {tries: 1}, bad: {spirit: -5}, luckMod: -0.1 },
+      { label: "伸手去够", ok: {spirit: 10, give: "water"}, bad: {spirit: -8}, luckMod: 0.1, okText: "你够到了那罐东西，冰得手疼。", badText: "你手被机器夹了一下。" },
+      { label: "拍一下机器", ok: {tries: 1}, bad: {spirit: -5}, luckMod: -0.1, okText: "机器哐当一声，多吐出一枚硬币。", badText: "机器没反应，你拍得手疼。" },
     ]},
     { weight: 2, text: "走廊尽头有一扇门，门后有人在叫你小时候的乳名。", options: [
-      { label: "走过去开门", ok: {spirit: 15, give: "old_headphones"}, bad: {spirit: -12}, luckMod: -0.2 },
-      { label: "转身往回走", ok: {spirit: 3}, bad: {spirit: -3}, luckMod: 0 },
+      { label: "走过去开门", ok: {spirit: 15, give: "old_headphones"}, bad: {spirit: -12}, luckMod: -0.2, okText: "门后是空的，但地上有一副旧耳机。", badText: "门后有什么东西撞了你一下。" },
+      { label: "转身往回走", ok: {spirit: 3}, bad: {spirit: -3}, luckMod: 0, okText: "你转身走了，那声音渐渐远了。", badText: "那声音追了你一路。" },
     ]},
     { weight: 1, text: "镜子里的你慢了半拍。你笑，它没笑。", options: [
-      { label: "盯着它看", ok: {give: "third_eye"}, bad: {spirit: -15}, luckMod: -0.3 },
-      { label: "移开视线", ok: {spirit: 2}, bad: {spirit: -5}, luckMod: 0 },
+      { label: "盯着它看", ok: {give: "third_eye"}, bad: {spirit: -15}, luckMod: -0.3, okText: "镜子裂开，一只眼睛嵌进了你的额头。", badText: "镜子里的你伸手出来掐住了你。" },
+      { label: "移开视线", ok: {spirit: 2}, bad: {spirit: -5}, luckMod: 0, okText: "你移开视线，它恢复了正常。", badText: "你移开视线后，后颈凉飕飕的。" },
     ]},
     { weight: 2, text: "废墟里有一台老式无线电，还在响。", options: [
-      { label: "捡起来", ok: {give: "old_radio"}, bad: {spirit: -10}, luckMod: -0.2 },
-      { label: "踹开它", ok: {spirit: 5}, bad: {spirit: -5}, luckMod: 0 },
+      { label: "捡起来", ok: {give: "old_radio"}, bad: {spirit: -10}, luckMod: -0.2, okText: "无线电钻进你口袋，再也掏不出来了。", badText: "无线电烫得像烧红的铁。" },
+      { label: "踹开它", ok: {spirit: 5}, bad: {spirit: -5}, luckMod: 0, okText: "你一脚踹碎了它，安静了。", badText: "你踹到了自己的脚。" },
     ]},
     { weight: 1, text: "桌子上有一碗冷掉的饭。你饿极了。", options: [
-      { label: "吃下去", ok: {give: "iron_stomach"}, bad: {spirit: -15}, luckMod: -0.3 },
-      { label: "倒掉", ok: {spirit: 0}, bad: {spirit: -3}, luckMod: 0 },
+      { label: "吃下去", ok: {give: "iron_stomach"}, bad: {spirit: -15}, luckMod: -0.3, okText: "你吃了下去，从此胃变成了铁。", badText: "饭里有什么东西在动。你吐了。" },
+      { label: "倒掉", ok: {spirit: 0}, bad: {spirit: -3}, luckMod: 0, okText: "你把饭倒了。肚子还是饿。", badText: "你倒掉时，碗底有一张你的脸。" },
     ]},
     { weight: 1, text: "黑板上用粉笔写着你的名字。另一半是你自己的笔迹。", options: [
-      { label: "全擦掉", ok: {spirit: 8}, bad: {spirit: -8}, luckMod: 0.1 },
-      { label: "留着", ok: {spirit: -3}, bad: {spirit: -3}, luckMod: 0 },
+      { label: "全擦掉", ok: {spirit: 8}, bad: {spirit: -8}, luckMod: 0.1, okText: "你擦干净了。黑板上空空的。", badText: "你擦到一半，名字自己又长了出来。" },
+      { label: "留着", ok: {spirit: -3}, bad: {spirit: -3}, luckMod: 0, okText: "你没擦。它在那里看着你。", badText: "你没擦。它在那里看着你。" },
     ]},
     { weight: 1, text: "照片里所有人都在看你身后。", options: [
-      { label: "回头看", ok: {spirit: 10, give: "black_tape"}, bad: {spirit: -15}, luckMod: -0.2 },
-      { label: "不回头", ok: {spirit: 5}, bad: {spirit: -2}, luckMod: 0.1 },
+      { label: "回头看", ok: {spirit: 10, give: "black_tape"}, bad: {spirit: -15}, luckMod: -0.2, okText: "身后什么都没有。地上有一卷黑胶布。", badText: "身后有什么东西跟你回来了。" },
+      { label: "不回头", ok: {spirit: 5}, bad: {spirit: -2}, luckMod: 0.1, okText: "你没回头。那东西失去了兴趣。", badText: "你没回头，但后颈一直凉。" },
     ]},
     { weight: 2, text: "淋浴间地上有一卷脏绷带。水很烫。", options: [
-      { label: "捡起绷带", ok: {give: "dirty_bandage", spirit: 8}, bad: {spirit: -5}, luckMod: 0.1 },
-      { label: "只洗澡", ok: {spirit: 12}, bad: {spirit: -3}, luckMod: 0 },
+      { label: "捡起绷带", ok: {give: "dirty_bandage", spirit: 8}, bad: {spirit: -5}, luckMod: 0.1, okText: "你捡起绷带，缠在手腕上。", badText: "绷带上有血。你缩了一下手。" },
+      { label: "只洗澡", ok: {spirit: 12}, bad: {spirit: -3}, luckMod: 0, okText: "热水冲下来，你觉得轻了一点。", badText: "水忽然变凉了。" },
     ]},
     { weight: 1, text: "天台风很大。你站在边上，忽然觉得被什么东西从后面轻轻推了一下。", options: [
-      { label: "往前迈一步", ok: {spirit: 20}, bad: {spirit: -20}, luckMod: -0.4 },
-      { label: "退回来", ok: {spirit: 5}, bad: {spirit: -2}, luckMod: 0 },
+      { label: "往前迈一步", ok: {spirit: 20}, bad: {spirit: -20}, luckMod: -0.4, okText: "你迈出去——脚下是空的，但你醒了。", badText: "你迈出去——这次没有醒。" },
+      { label: "退回来", ok: {spirit: 5}, bad: {spirit: -2}, luckMod: 0, okText: "你退回来了。风还在吹。", badText: "你退回来时，差点摔。" },
     ]},
     { weight: 1, text: "有人在你身后数你的脚步。你走快，它也快。", options: [
-      { label: "突然停下", ok: {spirit: 10}, bad: {spirit: -12}, luckMod: 0.1 },
-      { label: "继续走", ok: {spirit: 2}, bad: {spirit: -8}, luckMod: -0.1 },
+      { label: "突然停下", ok: {spirit: 10}, bad: {spirit: -12}, luckMod: 0.1, okText: "你猛地停下。身后什么都没有。", badText: "你停下时，它撞上了你。" },
+      { label: "继续走", ok: {spirit: 2}, bad: {spirit: -8}, luckMod: -0.1, okText: "你继续走。它数到了你家门口。", badText: "它数得越来越近。" },
     ]},
     { weight: 1, text: "电梯里的寻人启事，照片上是你。", options: [
-      { label: "撕下来", ok: {spirit: 8}, bad: {spirit: -8}, luckMod: 0.1 },
-      { label: "假装没看见", ok: {spirit: 0}, bad: {spirit: -6}, luckMod: 0 },
+      { label: "撕下来", ok: {spirit: 8}, bad: {spirit: -8}, luckMod: 0.1, okText: "你撕下来揉成一团。", badText: "你撕下来时，照片上的你眨了眨眼。" },
+      { label: "假装没看见", ok: {spirit: 0}, bad: {spirit: -6}, luckMod: 0, okText: "你假装没看见。电梯到了。", badText: "电梯没到，但门开了。" },
     ]},
     { weight: 2, text: "空无一人的便利店。货架上有面包和水。", options: [
-      { label: "拿面包", ok: {give: "cracker", spirit: 5}, bad: {spirit: -5}, luckMod: 0.1 },
-      { label: "拿水", ok: {give: "water", spirit: 5}, bad: {spirit: -5}, luckMod: 0.1 },
+      { label: "拿面包", ok: {give: "cracker", spirit: 5}, bad: {spirit: -5}, luckMod: 0.1, okText: "你拿了面包，没人来。", badText: "面包过期了。你肚子疼。" },
+      { label: "拿水", ok: {give: "water", spirit: 5}, bad: {spirit: -5}, luckMod: 0.1, okText: "你拿了水，冰的。", badText: "水里有东西在游。" },
     ]},
     { weight: 1, text: "ATM 吐出一张卡，背面写着你的身份证号。", options: [
-      { label: "拿走卡", ok: {tries: 1}, bad: {spirit: -10}, luckMod: -0.2 },
-      { label: "推回去", ok: {spirit: 3}, bad: {spirit: 0}, luckMod: 0 },
+      { label: "拿走卡", ok: {tries: 1}, bad: {spirit: -10}, luckMod: -0.2, okText: "你拿走卡。ATM 多吐了一次。", badText: "卡上的名字慢慢变成了你的。" },
+      { label: "推回去", ok: {spirit: 3}, bad: {spirit: 0}, luckMod: 0, okText: "你把卡推回去。它再也没出来。", badText: "你把卡推回去。它再也没出来。" },
     ]},
   ],
 

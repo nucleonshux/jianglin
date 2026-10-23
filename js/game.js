@@ -669,6 +669,13 @@
     if (success) S.luck += 2; else S.luck -= 2;
     S.luck = Math.max(0, Math.min(100, S.luck));
 
+    // 结果描述
+    if (success) {
+      log(opt.okText || "你做到了。", "good");
+    } else {
+      log(opt.badText || "出了意外。", "bad");
+    }
+
     if (result.spirit) {
       const before = S.spirit;
       S.spirit = Math.min(spiritMax(), S.spirit + result.spirit);
