@@ -11,8 +11,8 @@ const GAME_DATA = {
     maxTries: 10,
     spiritMax: 100,
     spiritPerTune: 10,
-    normalChance: 0.7,
-    minibossChance: 0.15,
+    normalChance: 0.5,
+    minibossChance: 0.12,
   },
 
   /* ---------- 开头 / 结局文案 ---------- */
@@ -182,6 +182,13 @@ const GAME_DATA = {
     { weight: 1, text: "镜子里的你慢了半拍。你笑，它没笑。你移开了视线。", effect: { type: "spirit", value: -12 } },
     { weight: 2, text: "邮筒里有一封信。没署名。字是你写的，但你不记得写过。", effect: { type: "spirit", value: 8 } },
     { weight: 1, text: "天台风很大。你站在边上，忽然觉得被什么东西从后面轻轻推了一下。", effect: { type: "spirit", value: 20 } },
+    { weight: 1, text: "卫生间的镜子裂了。裂缝里有一只眼睛在看你。你伸手碰了碰——它嵌进了你的额头。", effect: { type: "give_trinket", trinket: "third_eye" } },
+    { weight: 1, text: "废墟里有一台老式无线电，还在响。你捡起来，它就钻进了你口袋，再也掏不出来。", effect: { type: "give_trinket", trinket: "old_radio" } },
+    { weight: 1, text: "桌子上有一碗冷掉的饭。你饿极了，吃了下去。从那以后，你的胃变成了铁。", effect: { type: "give_trinket", trinket: "iron_stomach" } },
+    { weight: 2, text: "楼道灯坏了。你摸着黑走，脚下是自己的家。", effect: { type: "spirit", value: 6 } },
+    { weight: 1, text: "电梯里贴着一张寻人启事。照片上的人是你，但你从没失踪过。", effect: { type: "spirit", value: -8 } },
+    { weight: 2, text: "空无一人的便利店。你拿了一瓶水，没人收银。", effect: { type: "give_consumable", item: "water" } },
+    { weight: 1, text: "有人在你身后数你的脚步。你走快，它也快。你停，它也停。", effect: { type: "spirit", value: -10 } },
   ],
 
   /* ---------- 装备 ---------- */
@@ -256,6 +263,25 @@ const GAME_DATA = {
       name: "黑胶布",
       desc: "精神上限 +10，减伤 10%。",
       mods: { spiritMax: 10, dmgReduce: 0.1 },
+    },
+    /* ---------- 神器（装上取不下来） ---------- */
+    third_eye: {
+      name: "第三只眼",
+      desc: "【神器】攻击不会挥空，但精神上限 -20。它正在你额头上睁开。",
+      mods: { spiritMax: -20, noWhiff: true },
+      cursed: true,
+    },
+    old_radio: {
+      name: "旧无线电",
+      desc: "【神器】每次调频后回5精神，但更容易遇怪。它在你口袋里自己响。",
+      mods: { spiritRegen: 5, aggro: true },
+      cursed: true,
+    },
+    iron_stomach: {
+      name: "铁胃",
+      desc: "【神器】吃任何东西效果翻倍，但逃跑扣20精神。",
+      mods: { doubleFood: true, fleeBad: true },
+      cursed: true,
     },
   },
 

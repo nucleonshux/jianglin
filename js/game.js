@@ -134,8 +134,12 @@
     const w = currentWeapon();
     if (!w || !w.weapon) return { dmg: 1, extraMsg: "", whiffed: false };
     const spec = w.weapon;
-    // 扳手挥空
-    if (spec.whiff && Math.random() < spec.whiff) {
+    // 扳手挥空（第三只眼免疫）
+    const noWhiff = equippedList().some((id) => {
+      const t = GAME_DATA.trinkets[id];
+      return t && t.mods && t.mods.noWhiff;
+    });
+    if (spec.whiff && !noWhiff && Math.random() < spec.whiff) {
       return { dmg: 0, extraMsg: "但你挥空了。", whiffed: true };
     }
     let dmg = spec.base;
@@ -165,6 +169,10 @@
   }
 
   function log(text, type) {
+  function log(text, type) {
+    // 去重：和最后一行一样就不重复打
+    const last = el.logContent.lastElementChild;
+    if (last && last.textContent === text) return;
     // 去掉上一行的 latest
     const old = el.logContent.querySelector(".latest");
     if (old) old.classList.remove("latest");
@@ -327,10 +335,15 @@
     const item = S.bag[bagIdx];
     if (!item || itemType(item.id) !== "consumable") return;
     const c = GAME_DATA.consumables[item.id];
-    S.spirit = Math.min(spiritMax(), S.spirit + c.value);
+    const doubleFood = equippedList().some((id) => {
+      const t = GAME_DATA.trinkets[id];
+      return t && t.mods && t.mods.doubleFood;
+    });
+    const val = doubleFood ? c.value * 2 : c.value;
+    S.spirit = Math.min(spiritMax(), S.spirit + val);
     item.count -= 1;
     if (item.count <= 0) S.bag.splice(bagIdx, 1);
-    log(pick("use_item") + `${c.name}，精神 +${c.value}。`, "good");
+    log(pick("use_item") + `${c.name}，精神 +${val}。`, "good");
     updateHUD();
   }
 
@@ -527,7 +540,13 @@
   }
 
   function rollEncounter() {
-    if (Math.random() < GAME_DATA.config.normalChance) {
+    let chance = GAME_DATA.config.normalChance;
+    const aggro = equippedList().some((id) => {
+      const t = GAME_DATA.trinkets[id];
+      return t && t.mods && t.mods.aggro;
+    });
+    if (aggro) chance = Math.min(1, chance * 1.6);
+    if (Math.random() < chance) {
       if (Math.random() < GAME_DATA.config.minibossChance) {
         const m = pickRandom(GAME_DATA.minibosses);
         log(pick("enc_miniboss"), "bad");
@@ -638,7 +657,8 @@
           const atk = performAttack();
           if (!atk.whiffed) {
             b.hp -= atk.dmg;
-            log(pick(atk.dmg > 1 ? "clash_win" : "clash_win_bare") + ` 它受了${atk.dmg}下。 ${atk.extraMsg}`, "good");
+            const dmgTxt = atk.dmg >= 3 ? "三下" : atk.dmg === 2 ? "两下" : "一下";
+            log(pick(atk.dmg > 1 ? "clash_win" : "clash_win_bare") + `（${dmgTxt） ${atk.extraMsg}`, "good");
           } else {
             log(pick("clash_win_bare") + " 它退了一步，但你没打中。", "system");
           }
@@ -691,7 +711,8 @@
         const atk = performAttack();
         if (!atk.whiffed) {
           b.hp -= atk.dmg;
-          log(pick(atk.dmg > 1 ? "hit_foe" : "hit_foe_bare") + ` 它受了${atk.dmg}下。 ${atk.extraMsg}`, "good");
+          const dmgTxt = atk.dmg >= 3 ? "三下" : atk.dmg === 2 ? "两下" : "一下";
+          log(pick(atk.dmg > 1 ? "hit_foe" : "hit_foe_bare") + `（${dmgTxt） ${atk.extraMsg}`, "good");
         } else {
           log(pick("miss"), "system");
         }
@@ -720,12 +741,16 @@
       const t = GAME_DATA.trinkets[id];
       return t && t.mods && t.mods.fleeNoPenalty;
     });
+    const fleeBad = equippedList().some((id) => {
+      const t = GAME_DATA.trinkets[id];
+      return t && t.mods && t.mods.fleeBad;
+    });
     if (noPenalty) {
       log(pick("flee") + "（耳机里的静电盖住了脚步声）", "system");
     } else {
-      S.spirit -= 10;
+      S.spirit -= fleeBad ? 20 : 10;
       S.deathBy = "explore";
-      log(pick("flee") + "（精神 -10）", "bad");
+      log(pick("flee") + `（精神 -${fleeBad ? 20 : 10}）`, "bad");
     }
     S.battle = null;
     S.phase = "TUNING";
