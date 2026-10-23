@@ -42,6 +42,9 @@
     endOverlay: $("end-overlay"),
     endText: $("end-text"),
     endStats: $("end-stats"),
+    replaceOverlay: $("replace-overlay"),
+    replaceText: $("replace-text"),
+    replaceList: $("replace-list"),
     restartBtn: $("btn-restart"),
   };
 
@@ -220,11 +223,32 @@
       if (existing) { existing.count += 1; return true; }
     }
     if (S.bag.length >= BAG_SIZE) {
-      log("背包满了。", "system");
-      return false;
+      showReplacePrompt(id);
+      return true;
     }
     S.bag.push({ id, count: 1 });
     return true;
+  }
+
+  function showReplacePrompt(newId) {
+    S.pendingPickup = newId;
+    el.replaceText.textContent = "获得：" + itemName(newId) + " —— " + itemDesc(newId) + "。替换背包里哪个？";
+    el.replaceList.innerHTML = "";
+    S.bag.forEach((item, idx) => {
+      const btn = document.createElement("button");
+      btn.className = "px-btn";
+      btn.style.display = "block";
+      btn.style.margin = "6px 0";
+      btn.textContent = `${idx + 1}. ${itemName(item.id)}（${itemDesc(item.id).slice(0, 12)}）`;
+      btn.addEventListener("click", () => {
+        S.bag[idx] = { id: newId, count: 1 };
+        el.replaceOverlay.classList.add("hidden");
+        log(`★ 你把 ${itemName(newId)} 塞进了背包。`, "good");
+        S.pendingPickup = null;
+      });
+      el.replaceList.appendChild(btn);
+    });
+    el.replaceOverlay.classList.remove("hidden");
   }
 
   function equipItem(bagIdx) {
@@ -717,6 +741,11 @@
   /* ---------- 事件绑定 ---------- */
   el.startBtn.addEventListener("click", startGame);
   el.restartBtn.addEventListener("click", startGame);
+  $("btn-replace-skip").addEventListener("click", () => {
+    el.replaceOverlay.classList.add("hidden");
+    log("你没有拾取。", "system");
+    S.pendingPickup = null;
+  });
   el.keys.forEach((k) => k.addEventListener("click", () => onKey(k.dataset.k)));
   el.battleBtns.forEach((b) => b.addEventListener("click", () => battleMove(b.dataset.move)));
   el.itemBack.addEventListener("click", showBattleActions);
