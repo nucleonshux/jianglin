@@ -216,6 +216,13 @@
   }
 
   /* ---------- 背包 ---------- */
+  function hasItem(id) {
+    if (S.equipped.weapon === id) return true;
+    if (S.equipped.trinket1 === id) return true;
+    if (S.equipped.trinket2 === id) return true;
+    return S.bag.some((b) => b.id === id);
+  }
+
   function addToBag(id) {
     const type = itemType(id);
     if (type === "consumable") {
@@ -261,20 +268,33 @@
       S.equipped.weapon = item.id;
       S.bag.splice(bagIdx, 1);
       if (old) S.bag.push({ id: old, count: 1 });
+      updateHUD();
+      return;
+    }
+    // 饰品：选空槽位，满了弹选择
+    if (!S.equipped.trinket1) {
+      S.equipped.trinket1 = item.id;
+      S.bag.splice(bagIdx, 1);
+    } else if (!S.equipped.trinket2) {
+      S.equipped.trinket2 = item.id;
+      S.bag.splice(bagIdx, 1);
     } else {
-      if (!S.equipped.trinket1) {
-        S.equipped.trinket1 = item.id;
-        S.bag.splice(bagIdx, 1);
-      } else if (!S.equipped.trinket2) {
-        S.equipped.trinket2 = item.id;
-        S.bag.splice(bagIdx, 1);
-      } else {
-        const old = S.equipped.trinket1;
-        S.equipped.trinket1 = item.id;
+      // 两个都满，让玩家选替换哪个
+      const choice = window.prompt(
+        `替换哪个饰品？\n1. ${itemName(S.equipped.trinket1)}\n2. ${itemName(S.equipped.trinket2)}\n输入 1 或 2：`
+      );
+      if (choice === "1" || choice === "2") {
+        const slot = choice === "1" ? "trinket1" : "trinket2";
+        const old = S.equipped[slot];
+        S.equipped[slot] = item.id;
         S.bag.splice(bagIdx, 1);
         S.bag.push({ id: old, count: 1 });
+      } else {
+        log("取消装备。", "system");
+        return;
       }
     }
+    log(`★ 装备了 ${itemName(item.id)}。`, "good");
     updateHUD();
   }
 
@@ -684,14 +704,18 @@
 
     log(pick(b.isMiniboss ? "kill_miniboss" : "kill_normal"), "good");
 
+    // 饰品掉落：只掉没拥有过的
     if (Math.random() < m.trinketChance) {
-      const tid = m.trinkets[Math.floor(Math.random() * m.trinkets.length)];
-      if (addToBag(tid)) {
-        log(pick("get_trinket"), "good");
-        log(`★ ${itemName(tid)} —— ${itemDesc(tid)}`, "good");
+      const available = m.trinkets.filter((tid) => !hasItem(tid));
+      if (available.length > 0) {
+        const tid = available[Math.floor(Math.random() * available.length)];
+        if (addToBag(tid)) {
+          log(pick("get_trinket"), "good");
+          log(`★ ${itemName(tid)} —— ${itemDesc(tid)}`, "good");
+        }
       }
     }
-    if (Math.random() < 0.3) {
+    if (Math.random() < 0.15) {
       const ids = Object.keys(GAME_DATA.consumables);
       addToBag(ids[Math.floor(Math.random() * ids.length)]);
     }
