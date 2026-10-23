@@ -9,10 +9,10 @@ const GAME_DATA = {
     channelMin: 1,
     channelMax: 100,
     maxTries: 10,
-    spiritMax: 100,
-    spiritPerTune: 10,
-    normalChance: 0.65,     // 进频道后遇怪概率
-    minibossChance: 0.18,    // 遇怪时其中小BOSS的概率
+    spiritMax: 120,
+    spiritPerTune: 8,
+    normalChance: 0.55,
+    minibossChance: 0.12,
   },
 
   /* ---------- 开头 / 结局文案 ---------- */
@@ -162,26 +162,26 @@ const GAME_DATA = {
 
   /* ---------- 随机事件（直接执行，20个） ---------- */
   events: [
-    { weight: 2, text: "你被一阵浪声拍醒。这里是海边，潮水一下一下舔着你的脚。疲惫退了一点。", effect: { type: "spirit", value: 10 } },
-    { weight: 2, text: "一张旧沙发，弹簧坏了但很软。你坐了一会儿。", effect: { type: "spirit", value: 8 } },
-    { weight: 1, text: "电话亭里的电话自己响了。你没接。", effect: { type: "spirit", value: -5 } },
-    { weight: 1, text: "空教室的黑板上，用粉笔写着你的名字。你擦掉了它。", effect: { type: "spirit", value: -10 } },
-    { weight: 2, text: "自动售货机嗡嗡作响，掉出一罐还冰着的可乐。", effect: { type: "give_consumable", item: "water" } },
-    { weight: 2, text: "公园长椅。阳光透过叶子洒下来，你眯了一会儿。", effect: { type: "spirit", value: 15 } },
-    { weight: 1, text: "废弃医院的走廊，消毒水味呛人。你加快了脚步。", effect: { type: "spirit", value: -8 } },
-    { weight: 2, text: "图书馆角落，一本空白的书。翻到最后一页，画着你。", effect: { type: "spirit", value: 5 } },
-    { weight: 2, text: "雨夜的窗户。你听了很久的雨。", effect: { type: "spirit", value: 12 } },
-    { weight: 1, text: "自动钢琴在弹一首你没听过的曲子。琴凳上没有人。", effect: { type: "spirit", value: -6 } },
-    { weight: 1, text: "ATM 吐出一张银行卡，名字不是你的。你把它推了回去。", effect: { type: "spirit", value: -5 } },
-    { weight: 1, text: "一张老照片，里面所有人都在看你身后。你没回头。", effect: { type: "spirit", value: -10 } },
-    { weight: 2, text: "面包店刚开门，一股热乎气扑面而来。", effect: { type: "give_consumable", item: "cracker" } },
-    { weight: 1, text: "电影院银幕上在放你的生活。观众在笑。", effect: { type: "spirit", value: -8 } },
-    { weight: 2, text: "公共澡堂。热水浇下来，你觉得自己化了一半。", effect: { type: "spirit", value: 15 } },
-    { weight: 1, text: "空的自动售货机，你拍了它一下。掉出一枚硬币。", effect: { type: "restore_tries", value: 1 } },
-    { weight: 1, text: "墓园。有人在一块空碑前放了一束花。你站了一会儿。", effect: { type: "spirit", value: 5 } },
-    { weight: 1, text: "镜子里的你，动作慢了半拍。你没敢盯着看太久。", effect: { type: "spirit", value: -12 } },
-    { weight: 2, text: "邮筒里有一封写给你的信。没署名，字很潦草。", effect: { type: "spirit", value: 8 } },
-    { weight: 1, text: "天台。风很大，你什么都没想了一会儿。", effect: { type: "spirit", value: 20 } },
+    { weight: 2, text: "这里是海边。浪声一下一下，像有人在极远处替你数呼吸。你忘了刚才在怕什么。", effect: { type: "spirit", value: 10 } },
+    { weight: 2, text: "一张破沙发。弹簧扎人，但你还是坐了一会儿。有人在这上面等过谁。", effect: { type: "spirit", value: 8 } },
+    { weight: 1, text: "电话亭里的电话在响。听筒里是你自己的声音，在叫你的名字。你挂了。", effect: { type: "spirit", value: -5 } },
+    { weight: 1, text: "黑板上用粉笔写着你的名字。你擦了一半，发现另一半是用你自己的笔迹写的。", effect: { type: "spirit", value: -10 } },
+    { weight: 2, text: "自动售货机嗡嗡作响。掉出一罐冰可乐，拉环上有牙印。", effect: { type: "give_consumable", item: "water" } },
+    { weight: 2, text: "公园长椅。树叶的影子在你手背上走。你闭了一会儿眼。", effect: { type: "spirit", value: 15 } },
+    { weight: 1, text: "走廊很长，消毒水味。尽头有一扇门，门后有人在叫你小时候的乳名。你没走过去。", effect: { type: "spirit", value: -8 } },
+    { weight: 2, text: "一本空白的书。翻到最后一页，画着你——但少了一根手指。", effect: { type: "spirit", value: 5 } },
+    { weight: 2, text: "雨打在窗户上。你听着听着，忘了自己为什么在这里。", effect: { type: "spirit", value: 12 } },
+    { weight: 1, text: "钢琴自己在弹。你认出那首曲子——是你葬礼上会放的那首。", effect: { type: "spirit", value: -6 } },
+    { weight: 1, text: "ATM 吐出一张卡。背面写着你的身份证号。你把它推了回去。", effect: { type: "spirit", value: -5 } },
+    { weight: 1, text: "照片里所有人都在看你身后。你没有回头。你不敢。", effect: { type: "spirit", value: -10 } },
+    { weight: 2, text: "面包店刚开门。玻璃后面的人对你点了点头，像认识你很久了。", effect: { type: "give_consumable", item: "cracker" } },
+    { weight: 1, text: "银幕上在放你的一天。观众席有人在笑，有人在哭。你不知道该坐哪边。", effect: { type: "spirit", value: -8 } },
+    { weight: 2, text: "热水浇下来。你低头看自己的手，手指正在变透明。你洗了很久。", effect: { type: "spirit", value: 15 } },
+    { weight: 1, text: "空售货机。你拍了一下，掉出一枚硬币——是你小时候丢的那枚。", effect: { type: "restore_tries", value: 1 } },
+    { weight: 1, text: "一块空碑。上面没名字，却摆着一束还新鲜的花。你站了一会儿。", effect: { type: "spirit", value: 5 } },
+    { weight: 1, text: "镜子里的你慢了半拍。你笑，它没笑。你移开了视线。", effect: { type: "spirit", value: -12 } },
+    { weight: 2, text: "邮筒里有一封信。没署名。字是你写的，但你不记得写过。", effect: { type: "spirit", value: 8 } },
+    { weight: 1, text: "天台风很大。你站在边上，忽然觉得被什么东西从后面轻轻推了一下。", effect: { type: "spirit", value: 20 } },
   ],
 
   /* ---------- 装备 ---------- */
@@ -209,9 +209,9 @@ const GAME_DATA = {
     },
     screwdriver: {
       name: "十字螺丝刀",
-      desc: "稳定可靠。固定2倍伤害。",
+      desc: "细长。1倍伤害，但25%概率戳空。",
       mods: {},
-      weapon: { base: 2 },
+      weapon: { base: 1, whiff: 0.25 },
     },
     glass_shard: {
       name: "玻璃碎片",

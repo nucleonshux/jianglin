@@ -570,9 +570,14 @@
   function applyEventEffect(eff) {
     if (!eff) return;
     switch (eff.type) {
-      case "spirit":
+      case "spirit": {
+        const before = S.spirit;
         S.spirit = Math.min(spiritMax(), S.spirit + eff.value);
+        const actual = S.spirit - before;
+        if (actual > 0) log(`（精神 +${actual}）`, "good");
+        else if (actual < 0) log(`（精神 ${actual}）`, "bad");
         break;
+      }
       case "give_trinket":
         if (addToBag(eff.trinket)) {
           log(pick("get_trinket"), "good");
@@ -586,7 +591,7 @@
         break;
       case "restore_tries":
         S.tries += eff.value;
-        log(`调频机会 +${eff.value}。`, "good");
+        log(`（调频机会 +${eff.value}）`, "good");
         break;
     }
     updateHUD();
