@@ -162,33 +162,66 @@ const GAME_DATA = {
 
   /* ---------- 随机事件（直接执行，20个） ---------- */
   events: [
-    { weight: 2, text: "这里是海边。浪声一下一下，像有人在极远处替你数呼吸。你忘了刚才在怕什么。", effect: { type: "spirit", value: 10 } },
-    { weight: 2, text: "一张破沙发。弹簧扎人，但你还是坐了一会儿。有人在这上面等过谁。", effect: { type: "spirit", value: 8 } },
-    { weight: 1, text: "电话亭里的电话在响。听筒旁挂着一副旧耳机，海绵都烂了。你把它揣进了口袋。", effect: { type: "give_trinket", trinket: "old_headphones" } },
-    { weight: 1, text: "黑板上用粉笔写着你的名字。你擦了一半，发现另一半是用你自己的笔迹写的。地上有一卷黑胶布。", effect: { type: "give_trinket", trinket: "black_tape" } },
-    { weight: 2, text: "自动售货机嗡嗡作响。掉出一罐冰可乐，拉环上有牙印。", effect: { type: "give_consumable", item: "water" } },
-    { weight: 2, text: "公园长椅。树叶的影子在你手背上走。你闭了一会儿眼。", effect: { type: "spirit", value: 15 } },
-    { weight: 1, text: "走廊很长，消毒水味。尽头有一扇门，门后有人在叫你小时候的乳名。你没走过去。", effect: { type: "spirit", value: -8 } },
-    { weight: 2, text: "一本空白的书。翻到最后一页，画着你——但少了一根手指。", effect: { type: "spirit", value: 5 } },
-    { weight: 2, text: "雨打在窗户上。你听着听着，忘了自己为什么在这里。", effect: { type: "spirit", value: 12 } },
-    { weight: 1, text: "钢琴自己在弹。你认出那首曲子——是你葬礼上会放的那首。", effect: { type: "spirit", value: -6 } },
-    { weight: 1, text: "ATM 吐出一张卡。背面写着你的身份证号。你把它推了回去。", effect: { type: "spirit", value: -5 } },
-    { weight: 1, text: "照片里所有人都在看你身后。你没有回头。你不敢。", effect: { type: "spirit", value: -10 } },
-    { weight: 2, text: "面包店刚开门。玻璃后面的人对你点了点头，像认识你很久了。", effect: { type: "give_consumable", item: "cracker" } },
-    { weight: 1, text: "银幕上在放你的一天。观众席有人在笑，有人在哭。你不知道该坐哪边。", effect: { type: "spirit", value: -8 } },
-    { weight: 2, text: "热水浇下来。你低头看自己的手，手指正在变透明。淋浴间地上有一卷脏绷带。", effect: { type: "give_trinket", trinket: "dirty_bandage" } },
-    { weight: 1, text: "空售货机。你拍了一下，掉出一枚硬币——是你小时候丢的那枚。", effect: { type: "restore_tries", value: 1 } },
-    { weight: 1, text: "一块空碑。上面没名字，却摆着一束还新鲜的花。你站了一会儿。", effect: { type: "spirit", value: 5 } },
-    { weight: 1, text: "镜子里的你慢了半拍。你笑，它没笑。你移开了视线。", effect: { type: "spirit", value: -12 } },
-    { weight: 2, text: "邮筒里有一封信。没署名。字是你写的，但你不记得写过。", effect: { type: "spirit", value: 8 } },
-    { weight: 1, text: "天台风很大。你站在边上，忽然觉得被什么东西从后面轻轻推了一下。", effect: { type: "spirit", value: 20 } },
-    { weight: 1, text: "卫生间的镜子裂了。裂缝里有一只眼睛在看你。你伸手碰了碰——它嵌进了你的额头。", effect: { type: "give_trinket", trinket: "third_eye" } },
-    { weight: 1, text: "废墟里有一台老式无线电，还在响。你捡起来，它就钻进了你口袋，再也掏不出来。", effect: { type: "give_trinket", trinket: "old_radio" } },
-    { weight: 1, text: "桌子上有一碗冷掉的饭。你饿极了，吃了下去。从那以后，你的胃变成了铁。", effect: { type: "give_trinket", trinket: "iron_stomach" } },
-    { weight: 2, text: "楼道灯坏了。你摸着黑走，脚下是自己的家。", effect: { type: "spirit", value: 6 } },
-    { weight: 1, text: "电梯里贴着一张寻人启事。照片上的人是你，但你从没失踪过。", effect: { type: "spirit", value: -8 } },
-    { weight: 2, text: "空无一人的便利店。你拿了一瓶水，没人收银。", effect: { type: "give_consumable", item: "water" } },
-    { weight: 1, text: "有人在你身后数你的脚步。你走快，它也快。你停，它也停。", effect: { type: "spirit", value: -10 } },
+    // 无选择，直接发生
+    { weight: 1, text: "这里是海边。浪声一下一下，像有人在极远处替你数呼吸。你忘了刚才在怕什么。", effect: { type: "spirit", value: 10 }, luck: 2 },
+    { weight: 1, text: "一张破沙发。弹簧扎人，但你还是坐了一会儿。有人在这上面等过谁。", effect: { type: "spirit", value: 8 }, luck: 1 },
+    { weight: 2, text: "公园长椅。树叶的影子在你手背上走。你闭了一会儿眼。", effect: { type: "spirit", value: 12 }, luck: 2 },
+    { weight: 2, text: "雨打在窗户上。你听着听着，忘了自己为什么在这里。", effect: { type: "spirit", value: 10 }, luck: 1 },
+    { weight: 2, text: "楼道灯坏了。你摸着黑走，脚下是自己的家。", effect: { type: "spirit", value: 6 }, luck: 1 },
+
+    // 有选择
+    { weight: 2, text: "自动售货机嗡嗡响。投币口卡着一罐东西。", options: [
+      { label: "伸手去够", ok: {spirit: 10, give: "water"}, bad: {spirit: -8}, luckMod: 0.1 },
+      { label: "拍一下机器", ok: {tries: 1}, bad: {spirit: -5}, luckMod: -0.1 },
+    ]},
+    { weight: 2, text: "走廊尽头有一扇门，门后有人在叫你小时候的乳名。", options: [
+      { label: "走过去开门", ok: {spirit: 15, give: "old_headphones"}, bad: {spirit: -12}, luckMod: -0.2 },
+      { label: "转身往回走", ok: {spirit: 3}, bad: {spirit: -3}, luckMod: 0 },
+    ]},
+    { weight: 1, text: "镜子里的你慢了半拍。你笑，它没笑。", options: [
+      { label: "盯着它看", ok: {give: "third_eye"}, bad: {spirit: -15}, luckMod: -0.3 },
+      { label: "移开视线", ok: {spirit: 2}, bad: {spirit: -5}, luckMod: 0 },
+    ]},
+    { weight: 2, text: "废墟里有一台老式无线电，还在响。", options: [
+      { label: "捡起来", ok: {give: "old_radio"}, bad: {spirit: -10}, luckMod: -0.2 },
+      { label: "踹开它", ok: {spirit: 5}, bad: {spirit: -5}, luckMod: 0 },
+    ]},
+    { weight: 1, text: "桌子上有一碗冷掉的饭。你饿极了。", options: [
+      { label: "吃下去", ok: {give: "iron_stomach"}, bad: {spirit: -15}, luckMod: -0.3 },
+      { label: "倒掉", ok: {spirit: 0}, bad: {spirit: -3}, luckMod: 0 },
+    ]},
+    { weight: 1, text: "黑板上用粉笔写着你的名字。另一半是你自己的笔迹。", options: [
+      { label: "全擦掉", ok: {spirit: 8}, bad: {spirit: -8}, luckMod: 0.1 },
+      { label: "留着", ok: {spirit: -3}, bad: {spirit: -3}, luckMod: 0 },
+    ]},
+    { weight: 1, text: "照片里所有人都在看你身后。", options: [
+      { label: "回头看", ok: {spirit: 10, give: "black_tape"}, bad: {spirit: -15}, luckMod: -0.2 },
+      { label: "不回头", ok: {spirit: 5}, bad: {spirit: -2}, luckMod: 0.1 },
+    ]},
+    { weight: 2, text: "淋浴间地上有一卷脏绷带。水很烫。", options: [
+      { label: "捡起绷带", ok: {give: "dirty_bandage", spirit: 8}, bad: {spirit: -5}, luckMod: 0.1 },
+      { label: "只洗澡", ok: {spirit: 12}, bad: {spirit: -3}, luckMod: 0 },
+    ]},
+    { weight: 1, text: "天台风很大。你站在边上，忽然觉得被什么东西从后面轻轻推了一下。", options: [
+      { label: "往前迈一步", ok: {spirit: 20}, bad: {spirit: -20}, luckMod: -0.4 },
+      { label: "退回来", ok: {spirit: 5}, bad: {spirit: -2}, luckMod: 0 },
+    ]},
+    { weight: 1, text: "有人在你身后数你的脚步。你走快，它也快。", options: [
+      { label: "突然停下", ok: {spirit: 10}, bad: {spirit: -12}, luckMod: 0.1 },
+      { label: "继续走", ok: {spirit: 2}, bad: {spirit: -8}, luckMod: -0.1 },
+    ]},
+    { weight: 1, text: "电梯里的寻人启事，照片上是你。", options: [
+      { label: "撕下来", ok: {spirit: 8}, bad: {spirit: -8}, luckMod: 0.1 },
+      { label: "假装没看见", ok: {spirit: 0}, bad: {spirit: -6}, luckMod: 0 },
+    ]},
+    { weight: 2, text: "空无一人的便利店。货架上有面包和水。", options: [
+      { label: "拿面包", ok: {give: "cracker", spirit: 5}, bad: {spirit: -5}, luckMod: 0.1 },
+      { label: "拿水", ok: {give: "water", spirit: 5}, bad: {spirit: -5}, luckMod: 0.1 },
+    ]},
+    { weight: 1, text: "ATM 吐出一张卡，背面写着你的身份证号。", options: [
+      { label: "拿走卡", ok: {tries: 1}, bad: {spirit: -10}, luckMod: -0.2 },
+      { label: "推回去", ok: {spirit: 3}, bad: {spirit: 0}, luckMod: 0 },
+    ]},
   ],
 
   /* ---------- 装备 ---------- */

@@ -45,6 +45,9 @@
     replaceOverlay: $("replace-overlay"),
     replaceText: $("replace-text"),
     replaceList: $("replace-list"),
+    eventOverlay: $("event-overlay"),
+    eventText: $("event-text"),
+    eventOptions: $("event-options"),
     restartBtn: $("btn-restart"),
   };
 
@@ -89,6 +92,8 @@
       currentInput: "",
       battle: null,
       deathBy: "explore",   // explore(发疯) | battle(死亡)
+      luck: 50,            // 隐藏幸运值 0-100
+      timesTuned: 0,       // 已调频次数
     };
   }
 
@@ -503,6 +508,7 @@
     setFreq(n);
 
     S.tries -= 1;
+    S.timesTuned += 1;
     S.spirit -= GAME_DATA.config.spiritPerTune;
 
     log(pick("tune_in"), "system");
@@ -539,6 +545,19 @@
   }
 
   function rollEncounter() {
+    // 固定小BOSS：第5次=广播员（弱），第8次=巨像（强）
+    if (S.timesTuned === 5) {
+      const m = GAME_DATA.minibosses[0];
+      log(pick("enc_miniboss"), "bad");
+      startBattle(m, false, true);
+      return;
+    }
+    if (S.timesTuned === 8) {
+      const m = GAME_DATA.minibosses[1];
+      log(pick("enc_miniboss"), "bad");
+      startBattle(m, false, true);
+      return;
+    }
     let chance = GAME_DATA.config.normalChance;
     const aggro = equippedList().some((id) => {
       const t = GAME_DATA.trinkets[id];
@@ -546,15 +565,9 @@
     });
     if (aggro) chance = Math.min(1, chance * 1.6);
     if (Math.random() < chance) {
-      if (Math.random() < GAME_DATA.config.minibossChance) {
-        const m = pickRandom(GAME_DATA.minibosses);
-        log(pick("enc_miniboss"), "bad");
-        startBattle(m, false, true);
-      } else {
-        const m = pickRandom(GAME_DATA.monsters);
-        log(pick("enc_normal"), "system");
-        startBattle(m, false, false);
-      }
+      const m = pickRandom(GAME_DATA.monsters);
+      log(pick("enc_normal"), "system");
+      startBattle(m, false, false);
     } else {
       rollEvent();
     }
@@ -573,8 +586,67 @@
       r -= e.weight;
       if (r <= 0) { picked = e; break; }
     }
-    log(picked.text, "system");
-    applyEventEffect(picked.effect);
+
+    if (picked.options) {
+      // 选择式事件
+      log(picked.text, "system");
+      showEventChoice(picked);
+    } else {
+      // 直接事件
+      log(picked.text, "system");
+      applyEventEffect(picked.effect);
+      if (picked.luck) S.luck += picked.luck;
+      setTimeout(() => {
+        if (S.phase === "RESOLVING") {
+          S.phase = "TUNING";
+          setKeysEnabled(true);
+          setInput("");
+          showNumpad();
+        }
+      }, 900);
+    }
+  }
+
+  function showEventChoice(ev) {
+    el.eventText.textContent = "";
+    el.eventOptions.innerHTML = "";
+    ev.options.forEach((opt) => {
+      const btn = document.createElement("button");
+      btn.className = "px-btn";
+      btn.style.display = "block";
+      btn.style.margin = "8px 0";
+      btn.textContent = opt.label;
+      btn.addEventListener("click", () => resolveEventChoice(opt));
+      el.eventOptions.appendChild(btn);
+    });
+    el.eventOverlay.classList.remove("hidden");
+  }
+
+  function resolveEventChoice(opt) {
+    el.eventOverlay.classList.add("hidden");
+    // 成功率 = 0.5 + (luck-50)/100 + luckMod
+    const baseChance = 0.5 + (S.luck - 50) / 100 + (opt.luckMod || 0);
+    const success = Math.random() < baseChance;
+    const result = success ? opt.ok : opt.bad;
+    if (success) S.luck += 2; else S.luck -= 2;
+    S.luck = Math.max(0, Math.min(100, S.luck));
+
+    if (result.spirit) {
+      const before = S.spirit;
+      S.spirit = Math.min(spiritMax(), S.spirit + result.spirit);
+      const actual = S.spirit - before;
+      if (actual > 0) log(`（精神 +${actual}）`, "good");
+      else if (actual < 0) log(`（精神 ${actual}）`, "bad");
+    }
+    if (result.tries) {
+      S.tries += result.tries;
+      log(`（调频机会 +${result.tries}）`, "good");
+    }
+    if (result.give) {
+      addToBag(result.give);
+      log(`★ ${itemName(result.give)} —— ${itemDesc(result.give)}`, "good");
+    }
+    updateHUD();
     setTimeout(() => {
       if (S.phase === "RESOLVING") {
         S.phase = "TUNING";
@@ -582,7 +654,7 @@
         setInput("");
         showNumpad();
       }
-    }, 700);
+    }, 900);
   }
 
   function applyEventEffect(eff) {
