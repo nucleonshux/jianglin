@@ -673,8 +673,15 @@
         const actual = S.spirit - before;
         if (actual > 0) suffix = `（精神 +${actual}）`;
         else if (actual < 0) suffix = `（精神 ${actual}）`;
-      } else if (eff) {
-        applyEventEffect(eff);
+      } else if (eff && eff.type === "give_consumable") {
+        addToBag(eff.item);
+        suffix = `· ${itemName(eff.item)}`;
+      } else if (eff && eff.type === "give_trinket") {
+        addToBag(eff.trinket);
+        suffix = `★ ${itemName(eff.trinket)}`;
+      } else if (eff && eff.type === "restore_tries") {
+        S.tries += eff.value;
+        suffix = `（调频机会 +${eff.value}）`;
       }
       if (picked.luck) S.luck += picked.luck;
       log(picked.text + (suffix ? " " + suffix : ""), "system");
