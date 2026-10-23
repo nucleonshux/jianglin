@@ -645,10 +645,30 @@
     }
   }
 
+  function showEventModal(text) {
+    el.eventText.textContent = text;
+    el.eventOptions.innerHTML = "";
+    const btn = document.createElement("button");
+    btn.className = "px-btn";
+    btn.style.display = "block";
+    btn.style.margin = "12px auto 0";
+    btn.textContent = "继 续";
+    btn.addEventListener("click", () => {
+      el.eventOverlay.classList.add("hidden");
+      if (S.phase === "RESOLVING") {
+        S.phase = "TUNING";
+        setKeysEnabled(true);
+        setInput("");
+        showNumpad();
+      }
+    });
+    el.eventOptions.appendChild(btn);
+    el.eventOverlay.classList.remove("hidden");
+  }
+
   function showEventChoice(ev) {
     el.eventText.textContent = ev.text;
-    el.eventOptions.innerHTML = "";
-    ev.options.forEach((opt) => {
+    el.eventOptions.innerHTML = "";    ev.options.forEach((opt) => {
       const btn = document.createElement("button");
       btn.className = "px-btn";
       btn.style.display = "block";
@@ -902,10 +922,10 @@
     if (b.isMiniboss) {
       if (S.timesTuned === 5) {
         S.proximityMode = true;
-        log("仪器的指示灯变了。现在它只告诉你离它近了还是远了。", "system");
+        showEventModal("它碎掉的瞬间，周围起了雾。仪器不再告诉你高低，只闪着：近了，或者远了。");
       } else if (S.timesTuned === 8) {
         S.lightsBroken = true;
-        log("你把巨像砸烂的瞬间，仪器短路了。灯再也不亮了。", "bad");
+        showEventModal("你把巨像砸烂的瞬间，仪器里冒出一股焦味。灯灭了。它什么都不会再告诉你了。");
       }
     }
 
