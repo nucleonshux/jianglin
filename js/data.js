@@ -32,6 +32,15 @@ const GAME_DATA = {
     "【降临 · 已被你听见】",
   ],
 
+  endingSpeedrun: [
+    "你甚至没怎么找。",
+    "第三个频道。它就在那里，等着被你发现。",
+    "你杀死它的时候，它甚至没来得及展开。",
+    "太巧了。巧得像它故意让你找到的。",
+    "",
+    "【速通玩家 · 你是不是来过这里？】",
+  ],
+
   endingLoseSpirit: [
     "你的手指停在按键上，再也按不下去了。",
     "那些声音、形状、名字——一起涌进了你的脑子里。",
@@ -205,8 +214,8 @@ const GAME_DATA = {
       { label: "留着", ok: {spirit: -3}, bad: {spirit: -3}, luckMod: 0, okText: "你没擦。它在那里看着你，你转身走了。", badText: "你没擦。黑板上开始密密麻麻浮现出你不认识的字符，你打了个寒颤。" },
     ]},
     { weight: 1, text: "照片里所有人都在看你身后。", options: [
-      { label: "回头看", ok: {spirit: 10, give: "black_tape"}, bad: {spirit: -15}, luckMod: -0.2, okText: "身后什么都没有。地上有一卷黑胶布。", badText: "身后有什么东西。它贴着你，一起回了这个频道。" },
-      { label: "不回头", ok: {spirit: 5}, bad: {spirit: -2}, luckMod: 0.1, okText: "你没回头。那东西失去了兴趣。", badText: "你没回头。但后颈一直凉。它还在。" },
+      { label: "回头看", ok: {spirit: 10, give: "black_tape"}, bad: {spirit: -15}, luckMod: -0.2, okText: "身后什么都没有。地上有一卷黑胶布。", badText: "你回头时，那东西正贴在你后背上。" },
+      { label: "不回头", ok: {spirit: 5}, bad: {spirit: -2}, luckMod: 0.1, okText: "你没回头。那东西失去了兴趣。", badText: "你没回头。但它在你耳朵边呼了口气。" },
     ]},
     { weight: 2, text: "淋浴间地上有一卷脏绷带。水很烫。", options: [
       { label: "捡起绷带", ok: {give: "dirty_bandage", spirit: 8}, bad: {spirit: -5}, luckMod: 0.1, okText: "你捡起绷带，缠在手腕上。它温温的。", badText: "绷带上有血。你缩了一下手。血是热的。" },

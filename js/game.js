@@ -997,7 +997,7 @@
         }
       }
     }
-    if (Math.random() < 0.3) {
+    if (Math.random() < 0.4) {
       const ids = Object.keys(GAME_DATA.consumables);
       addToBag(ids[Math.floor(Math.random() * ids.length)]);
     }
@@ -1029,7 +1029,9 @@
     S.phase = "END";
     setKeysEnabled(false);
     let lines = [];
-    if (kind === "win") lines = GAME_DATA.endingWin;
+    if (kind === "win") {
+      lines = S.timesTuned <= 3 ? GAME_DATA.endingSpeedrun : GAME_DATA.endingWin;
+    }
     else if (kind === "death") lines = GAME_DATA.endingDeath;
     else if (kind === "crazy") lines = GAME_DATA.endingLoseSpirit;
     else lines = GAME_DATA.endingLoseTries;
