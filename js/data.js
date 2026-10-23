@@ -232,6 +232,10 @@ const GAME_DATA = {
       { label: "拿走卡", ok: {tries: 1}, bad: {spirit: -10}, luckMod: -0.2, okText: "你拿走卡。ATM 多吐了一次。", badText: "卡上的名字慢慢变成了你的。" },
       { label: "推回去", ok: {spirit: 3}, bad: {spirit: 0}, luckMod: 0, okText: "你把卡推回去。它再也没出来。", badText: "你把卡推回去。它再也没出来。" },
     ]},
+    { weight: 1, text: "一个白大褂的人递给你两团棉花。\"戴上它。\"他说。", options: [
+      { label: "接过棉花", ok: {give: "noise_canceler"}, bad: {spirit: -15}, luckMod: 0.1, okText: "你把棉花塞进耳朵。白噪声小了。", badText: "棉花是热的。你吐了。" },
+      { label: "拒绝", ok: {spirit: 5}, bad: {spirit: -5}, luckMod: 0, okText: "你没接。他消失了。", badText: "他叹了口气。你耳朵开始响。" },
+    ]},
   ],
 
   /* ---------- 装备 ---------- */

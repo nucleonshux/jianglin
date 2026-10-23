@@ -926,9 +926,6 @@
       } else if (S.timesTuned === 8) {
         S.lightsBroken = true;
         showEventModal("你把巨像砸烂的瞬间，仪器里冒出一股焦味。灯灭了。它什么都不会再告诉你了。");
-        // 掉落抗噪耳塞
-        addToBag("noise_canceler");
-        log("★ 它的耳朵掉了下来——一副抗噪耳塞。戴上它，白噪声就小了。", "good");
       }
     }
 
