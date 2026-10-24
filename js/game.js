@@ -854,7 +854,6 @@
     }
 
     setKeysEnabled(false);
-    const b = S.battle;
     const m = b.monster;
 
     // 怪物按AI权重选动作 [attack, defend, dodge]
