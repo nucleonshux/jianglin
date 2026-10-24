@@ -58,7 +58,8 @@
   /* ---------- 物品类型 ---------- */
   function itemType(id) {
     if (GAME_DATA.consumables[id]) return "consumable";
-    if (id === "fruit_knife") return "weapon";
+    const t = GAME_DATA.trinkets[id];
+    if (t && t.weapon) return "weapon";
     return "trinket";
   }
   function itemName(id) {
@@ -703,6 +704,9 @@
       btn.addEventListener("click", () => {
         el.eventOverlay.classList.add("hidden");
         callback(kind === "weapon" ? (i === 0 ? "weapon1" : "weapon2") : (i === 0 ? "trinket1" : "trinket2"));
+        // 实时刷新背包
+        if (!el.itemList.classList.contains("hidden")) renderBagGrid(el.itemListGrid);
+        if (!el.fieldInv.classList.contains("hidden")) renderBagGrid(el.fieldInvGrid);
       });
       el.eventOptions.appendChild(btn);
     });
@@ -882,7 +886,8 @@
           dmg = Math.round(dmg);
           S.spirit -= dmg;
           S.deathBy = "battle";
-          log(pick("clash_lose") + `（精神 -${dmg}）`, "bad");
+          const atkText = m.attackTexts ? pick(m.attackTexts) : pick("hit_self");
+          log(atkText + " " + pick("clash_lose") + `（精神 -${dmg}）`, "bad");
         }
       } else if (move === "defend") {
         // 防御：70%防住扣2，30%全扣
@@ -895,7 +900,8 @@
           dmg = Math.round(dmg);
           S.spirit -= dmg;
           S.deathBy = "battle";
-          log(pick("defend_fail") + `（精神 -${dmg}）`, "bad");
+          const atkText = m.attackTexts ? pick(m.attackTexts) : pick("hit_self");
+          log(atkText + " " + pick("defend_fail") + `（精神 -${dmg}）`, "bad");
         }
       } else if (move === "dodge") {
         // 闪避：60%闪开+3精神，40%全扣
@@ -907,7 +913,8 @@
           dmg = Math.round(dmg);
           S.spirit -= dmg;
           S.deathBy = "battle";
-          log(pick("dodge_fail") + `（精神 -${dmg}）`, "bad");
+          const atkText = m.attackTexts ? pick(m.attackTexts) : pick("hit_self");
+          log(atkText + " " + pick("dodge_fail") + `（精神 -${dmg}）`, "bad");
         }
       }
     } else if (ai === "defend") {
