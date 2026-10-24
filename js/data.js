@@ -193,11 +193,11 @@ const GAME_DATA = {
     { weight: 2, text: "楼道灯坏了。你摸着黑走，脚下是自己的家。", effect: { type: "spirit", value: 3 }, luck: 1 },
     // 负面小事件
     { weight: 2, text: "钢琴自己在弹。你认出那首曲子——是你葬礼上会放的那首。", effect: { type: "spirit", value: -5 }, luck: -1 },
-    { weight: 2, text: "照片里所有人都在看你身后。你没有回头。", effect: { type: "spirit", value: -6 }, luck: -1 },
+    { weight: 2, text: "走廊的灯一闪一闪。你的影子比你慢半拍。", effect: { type: "spirit", value: -6 }, luck: -1 },
     { weight: 2, text: "有人在你身后数你的脚步。你走快，它也快。", effect: { type: "spirit", value: -6 }, luck: -1 },
     { weight: 2, text: "电梯里贴着寻人启事。照片上的人是你。", effect: { type: "spirit", value: -5 }, luck: -1 },
-    { weight: 1, text: "镜子里的你慢了半拍。你笑，它没笑。", effect: { type: "spirit", value: -8 }, luck: -2 },
-    { weight: 1, text: "走廊尽头有人在叫你小时候的乳名。你没走过去。", effect: { type: "spirit", value: -5 }, luck: -1 },
+    { weight: 1, text: "水龙头在滴水。你数了一下，它滴得比你心跳慢。", effect: { type: "spirit", value: -8 }, luck: -2 },
+    { weight: 1, text: "楼道尽头有一扇门，门缝里透出光。你没走过去。", effect: { type: "spirit", value: -5 }, luck: -1 },
     { weight: 1, text: "银幕上在放你的一天。观众席有人在笑。", effect: { type: "spirit", value: -6 }, luck: -1 },
 
     // 有选择
