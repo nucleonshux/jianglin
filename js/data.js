@@ -196,7 +196,7 @@ const GAME_DATA = {
     { weight: 2, text: "走廊的灯一闪一闪。你的影子比你慢半拍。", effect: { type: "spirit", value: -6 }, luck: -1 },
     { weight: 2, text: "有人在你身后数你的脚步。你走快，它也快。", effect: { type: "spirit", value: -6 }, luck: -1 },
     { weight: 2, text: "电梯里贴着寻人启事。照片上的人是你。", effect: { type: "spirit", value: -5 }, luck: -1 },
-    { weight: 1, text: "水龙头在滴水。你数了一下，它滴得比你心跳慢。", effect: { type: "spirit", value: -8 }, luck: -2 },
+    { weight: 1, text: "鱼缸里的鱼好像在说话。你凑过去——它在喊你的乳名。", effect: { type: "spirit", value: -8 }, luck: -2 },
     { weight: 1, text: "楼道尽头有一扇门，门缝里透出光。你没走过去。", effect: { type: "spirit", value: -5 }, luck: -1 },
     { weight: 1, text: "银幕上在放你的一天。观众席有人在笑。", effect: { type: "spirit", value: -6 }, luck: -1 },
 
