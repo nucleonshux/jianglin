@@ -321,26 +321,29 @@
     const type = itemType(item.id);
     if (type === "consumable") return;
     if (type === "weapon") {
+      const canDual = S.equipped.trinket1 === "giant_knuckle" || S.equipped.trinket2 === "giant_knuckle";
       if (!S.equipped.weapon1) {
         S.equipped.weapon1 = item.id;
         S.bag.splice(bagIdx, 1);
-      } else if (!S.equipped.weapon2) {
+      } else if (canDual && !S.equipped.weapon2) {
         S.equipped.weapon2 = item.id;
         S.bag.splice(bagIdx, 1);
-      } else {
-        const choice = window.prompt(
-          `替换哪把武器？\n1. ${itemName(S.equipped.weapon1)}\n2. ${itemName(S.equipped.weapon2)}\n输入 1 或 2：`
-        );
-        if (choice === "1" || choice === "2") {
-          const slot = choice === "1" ? "weapon1" : "weapon2";
+      } else if (canDual) {
+        // 双武器满了，弹窗选替换哪个
+        showSlotChoice("weapon", [S.equipped.weapon1, S.equipped.weapon2], (slot) => {
           const old = S.equipped[slot];
           S.equipped[slot] = item.id;
           S.bag.splice(bagIdx, 1);
           if (old) S.bag.push({ id: old, count: 1 });
-        } else {
-          log("取消装备。", "system");
-          return;
-        }
+          updateHUD();
+        });
+        return;
+      } else {
+        // 没有巨像的手，只能替换主手
+        const old = S.equipped.weapon1;
+        S.equipped.weapon1 = item.id;
+        S.bag.splice(bagIdx, 1);
+        if (old) S.bag.push({ id: old, count: 1 });
       }
       updateHUD();
       return;
@@ -353,20 +356,16 @@
       S.equipped.trinket2 = item.id;
       S.bag.splice(bagIdx, 1);
     } else {
-      // 两个都满，让玩家选替换哪个
-      const choice = window.prompt(
-        `替换哪个饰品？\n1. ${itemName(S.equipped.trinket1)}\n2. ${itemName(S.equipped.trinket2)}\n输入 1 或 2：`
-      );
-      if (choice === "1" || choice === "2") {
-        const slot = choice === "1" ? "trinket1" : "trinket2";
+      // 两个都满，弹窗选替换哪个
+      showSlotChoice("trinket", [S.equipped.trinket1, S.equipped.trinket2], (slot) => {
         const old = S.equipped[slot];
         S.equipped[slot] = item.id;
         S.bag.splice(bagIdx, 1);
         S.bag.push({ id: old, count: 1 });
-      } else {
-        log("取消装备。", "system");
-        return;
-      }
+        log(`★ 装备了 ${itemName(item.id)}。`, "good");
+        updateHUD();
+      });
+      return;
     }
     log(`★ 装备了 ${itemName(item.id)}。`, "good");
     updateHUD();
@@ -697,6 +696,32 @@
     }
   }
 
+  function showSlotChoice(kind, ids, callback) {
+    const labels = kind === "weapon" ? ["主手", "副手"] : ["饰品1", "饰品2"];
+    el.eventText.textContent = `替换哪个？`;
+    el.eventOptions.innerHTML = "";
+    ids.forEach((id, i) => {
+      const btn = document.createElement("button");
+      btn.className = "px-btn";
+      btn.textContent = `${labels[i]}: ${itemName(id)}`;
+      btn.addEventListener("click", () => {
+        el.eventOverlay.classList.add("hidden");
+        callback(kind === "weapon" ? (i === 0 ? "weapon1" : "weapon2") : (i === 0 ? "trinket1" : "trinket2"));
+      });
+      el.eventOptions.appendChild(btn);
+    });
+    // 取消按钮
+    const cancel = document.createElement("button");
+    cancel.className = "px-btn";
+    cancel.textContent = "取消";
+    cancel.addEventListener("click", () => {
+      el.eventOverlay.classList.add("hidden");
+      log("取消装备。", "system");
+    });
+    el.eventOptions.appendChild(cancel);
+    el.eventOverlay.classList.remove("hidden");
+  }
+
   function showEventModal(text) {
     el.eventText.textContent = text;
     el.eventOptions.innerHTML = "";
@@ -800,7 +825,7 @@
   /* ---------- 战斗（概率制，非猜拳） ---------- */
   function startBattle(monster, isBoss, isMiniboss) {
     S.phase = "BATTLE";
-    S.battle = { monster, hp: monster.hp, isBoss, isMiniboss };
+    S.battle = { monster, hp: monster.hp, isBoss, isMiniboss, debuff: null, debuffNext: null };
     showBattlePad();
     showSprite(monster.sprite, monster.name[0] + "？");
     el.battlePrompt.textContent = monster.desc;
@@ -812,6 +837,21 @@
     if (!S.battle || S.phase !== "BATTLE") return;
     if (move === "item") { showItemList(); return; }
     if (move === "flee") { doFlee(); return; }
+
+    const b = S.battle;
+    // debuff 检查
+    if (b.debuff === "disableAttack" && move === "attack") {
+      log("它的声音堵在你喉咙里。你动不了手。", "bad");
+      return;
+    }
+    if (b.debuff === "disableDefend" && move === "defend") {
+      log("它的节奏让你站不住。你防不住。", "bad");
+      return;
+    }
+    if (b.debuff === "disableDodge" && move === "dodge") {
+      log("它的歌声缠住了你的脚。你闪不开。", "bad");
+      return;
+    }
 
     setKeysEnabled(false);
     const b = S.battle;
@@ -910,6 +950,18 @@
     if (b.hp <= 0) {
       endBattleWin();
       return;
+    }
+    // 怪物技能触发
+    if (m.skill && Math.random() < (m.skillChance || 0.2)) {
+      b.debuff = m.skill;
+      const debuffTexts = {
+        disableAttack: "它的声音堵在你喉咙里。下回合你攻不了。",
+        disableDefend: "它的节奏让你站不住。下回合你防不住。",
+        disableDodge: "它的歌声缠住了你的脚。下回合你闪不开。",
+      };
+      log(debuffTexts[m.skill] || "它对你做了什么。", "bad");
+    } else if (b.debuff) {
+      b.debuff = null;
     }
     setTimeout(() => setKeysEnabled(true), 300);
   }
