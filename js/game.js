@@ -558,10 +558,6 @@
     if (n === S.bossChannel) {
       setLights("boss");
       log(pick("enc_boss"), "bad");
-      if (S.tries >= 8) {
-        addToBag("hunter_notebook");
-        log("★ 仪器掉出一本旧笔记。", "good");
-      }
       startBattle(GAME_DATA.boss, true, false);
     } else {
       if (S.lightsBroken) {
