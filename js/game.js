@@ -548,6 +548,36 @@
     S.timesTuned += 1;
     S.spirit -= GAME_DATA.config.spiritPerTune;
 
+    // 串台：开局50必定触发，其他5%概率
+    const isStatic = (S.timesTuned === 1 && n === 50) || Math.random() < 0.05;
+    if (isStatic) {
+      setLights(null);
+      el.freqNum.textContent = "ERR";
+      log("频道串了。数字在抖，你听不清任何东西。", "bad");
+      showEventModal("你进错频道了。这里没有它。要离开，你得留下点什么。");
+      // 串台离开：留道具或扣精神
+      setTimeout(() => {
+        showSlotChoice("trinket", [null, null], (slot) => {
+          // 简单处理：扣15精神离开，30%概率获得异常保险丝
+          S.spirit -= 15;
+          log("你在这个频道里丢下了一点东西。精神 -15。", "bad");
+          if (Math.random() < 0.3) {
+            addToBag("weird_fuse");
+            log("★ 异常保险丝 —— 串台里捡的。闪避成功率 +20%。", "good");
+          }
+          updateHUD();
+          checkGameOver();
+          if (S.phase === "RESOLVING") {
+            S.phase = "TUNING";
+            setKeysEnabled(true);
+            setInput("");
+            showNumpad();
+          }
+        });
+      }, 800);
+      return;
+    }
+
     log(pick("tune_in"), "system");
 
     const regen = spiritRegen();
@@ -904,8 +934,10 @@
           log(atkText + " " + pick("defend_fail") + `（精神 -${dmg}）`, "bad");
         }
       } else if (move === "dodge") {
-        // 闪避：60%闪开+3精神，40%全扣
-        if (Math.random() < 0.6) {
+        // 闪避：60%闪开+3精神，40%全扣，异常保险丝+20%
+        let dodgeChance = 0.6;
+        if (equippedList().includes("weird_fuse")) dodgeChance += 0.2;
+        if (Math.random() < dodgeChance) {
           S.spirit = Math.min(spiritMax(), S.spirit + 3);
           log(pick("dodge_ok") + " 精神 +3。", "good");
         } else {
@@ -957,9 +989,9 @@
     if (m.skill && Math.random() < (m.skillChance || 0.2)) {
       b.debuff = m.skill;
       const debuffTexts = {
-        disableAttack: "它的声音堵在你喉咙里。下回合你攻不了。",
-        disableDefend: "它的节奏让你站不住。下回合你防不住。",
-        disableDodge: "它的歌声缠住了你的脚。下回合你闪不开。",
+        disableAttack: "它的声音在你脑子里响成一片。下回合你下不了手。",
+        disableDefend: "它的节奏让你站不稳。下回合你挡不住。",
+        disableDodge: "它的歌声缠住了你的脚。下回合你跑不掉。",
       };
       log(debuffTexts[m.skill] || "它对你做了什么。", "bad");
     } else if (b.debuff) {

@@ -246,7 +246,7 @@ const GAME_DATA = {
       { label: "假装没看见", ok: {spirit: 0}, bad: {spirit: -6}, luckMod: 0, okText: "你假装没看见。电梯到了。", badText: "电梯没到。但门开了。外面是黑的。" },
     ]},
     { weight: 2, text: "空无一人的便利店。货架上有面包和水。", options: [
-      { label: "拿面包", ok: {give: "cracker", spirit: 5}, bad: {spirit: -5}, luckMod: 0.1, okText: "你拿了面包。没人来。", badText: "面包过期了。你肚子疼。里面有牙齿。" },
+      { label: "拿面包", ok: {give: "cracker", spirit: 5}, bad: {spirit: -5}, luckMod: 0.1, okText: "你拿了一包压缩饼干。没人来。", badText: "饼干过期了。你肚子疼。里面有牙齿。" },
       { label: "拿水", ok: {give: "water", spirit: 5}, bad: {spirit: -5}, luckMod: 0.1, okText: "你拿了水。冰的。", badText: "水里有东西在游。它在看你。" },
     ]},
     { weight: 1, text: "ATM 吐出一张卡，背面写着你的身份证号。", options: [
@@ -347,6 +347,11 @@ const GAME_DATA = {
       name: "抗噪耳塞",
       desc: "戴上后，即使在白噪声里也能听清高低。",
       mods: { ignoreNoise: true },
+    },
+    weird_fuse: {
+      name: "异常保险丝",
+      desc: "串台里捡的。闪避成功率 +20%。",
+      mods: { dodgeBonus: 0.2 },
     },
     old_mic: {
       name: "旧麦克风",
