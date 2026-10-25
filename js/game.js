@@ -940,8 +940,94 @@
     el.eventOverlay.classList.remove("hidden");
   }
 
+  function drawEvent(evText) {
+    const canvas = $("event-canvas");
+    const ctx = canvas.getContext("2d");
+    const cw = canvas.width, ch = canvas.height;
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, cw, ch);
+    ctx.fillStyle = "#fff";
+    const cx = cw / 2, cy = ch / 2;
+    const s = 4;
+
+    function px(x, y, w, h) { ctx.fillRect(cx + x * s, cy + y * s, w * s, h * s); }
+
+    if (evText.includes("售货机")) {
+      // 售货机：长方形+投币口
+      px(-5, -7, 10, 14);
+      px(-4, -6, 3, 8); // 橱窗
+      px(2, -5, 2, 2); // 按钮
+      px(2, 0, 2, 1); // 取货口
+    } else if (evText.includes("门")) {
+      // 一扇门
+      px(-4, -8, 8, 16);
+      px(2, 0, 1, 1); // 门把手
+    } else if (evText.includes("镜子")) {
+      // 镜子
+      px(-3, -7, 6, 14);
+      px(-2, -6, 4, 12); // 镜面
+    } else if (evText.includes("无线电")) {
+      // 老式无线电
+      px(-5, -4, 10, 8);
+      px(-4, -3, 3, 3); // 喇叭
+      px(1, -2, 3, 1); // 调频条
+      px(0, -5, 1, 2); // 天线
+    } else if (evText.includes("饭")) {
+      // 一碗饭
+      px(-3, 0, 6, 2); // 碗
+      px(-2, -2, 4, 2); // 饭
+    } else if (evText.includes("黑板")) {
+      // 黑板
+      px(-6, -5, 12, 10);
+      ctx.fillStyle = "#333";
+      ctx.fillRect(cx - 5 * s, cy - 4 * s, 10 * s, 8 * s);
+      ctx.fillStyle = "#fff";
+      px(-3, -2, 6, 1);
+      px(-2, 0, 4, 1);
+    } else if (evText.includes("照片")) {
+      // 照片
+      px(-3, -4, 6, 8);
+      px(-2, -3, 4, 5); // 人像
+    } else if (evText.includes("淋浴")) {
+      // 淋浴
+      px(-1, -6, 2, 2); // 花洒
+      for (let i = -2; i <= 2; i++) px(i, -3, 0.3, 3); // 水流
+    } else if (evText.includes("天台")) {
+      // 天台边
+      px(-6, 2, 12, 1);
+      px(0, -3, 1, 3); // 人影
+    } else if (evText.includes("脚步")) {
+      // 一串脚印
+      px(-4, -2, 1, 1); px(-2, 0, 1, 1); px(0, -2, 1, 1); px(2, 0, 1, 1); px(4, -2, 1, 1);
+    } else if (evText.includes("电梯")) {
+      // 电梯门
+      px(-4, -8, 8, 16);
+      px(0, -8, 0.3, 16); // 门缝
+    } else if (evText.includes("便利店")) {
+      // 货架
+      px(-5, -5, 10, 10);
+      px(-4, -3, 8, 0.5);
+      px(-4, 0, 8, 0.5);
+      px(-4, 3, 8, 0.5);
+    } else if (evText.includes("ATM")) {
+      px(-3, -6, 6, 12);
+      px(-2, -5, 4, 3); // 屏幕
+    } else if (evText.includes("串") || evText.includes("祭坛")) {
+      // 祭坛
+      px(-2, -2, 4, 4);
+      px(-4, 2, 8, 2);
+    }
+
+    // 雪花
+    ctx.fillStyle = "rgba(255,255,255,0.4)";
+    for (let i = 0; i < 30; i++) {
+      ctx.fillRect(Math.random() * cw, Math.random() * ch, 1, 1);
+    }
+  }
+
   function showEventChoice(ev) {
     el.eventText.textContent = ev.text;
+    drawEvent(ev.text);
     el.eventOptions.innerHTML = "";
     ev.options.forEach((opt) => {
       const btn = document.createElement("button");

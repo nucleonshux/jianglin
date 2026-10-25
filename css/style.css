@@ -435,6 +435,7 @@ html, body {
   color: #fff;
 }
 #battle-foe-name { font-size: 14px; color: #aaa; margin-bottom: 8px; letter-spacing: 2px; }
+#event-canvas { display: block; margin: 0 auto 12px; background: #000; border: 1px solid #333; image-rendering: pixelated; }
 #event-text { font-size: 13px; color: #ccc; margin-bottom: 24px; line-height: 1.7; word-break: break-all; text-align: left; padding: 0 4px; min-height: 44px; display: flex; align-items: center; }
 #event-options { display: flex; gap: 8px; justify-content: center; }
 #event-options button { font-size: 13px; padding: 10px 12px; flex: 1; margin: 0; }
