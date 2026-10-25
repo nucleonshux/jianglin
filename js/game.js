@@ -37,7 +37,7 @@
     battleActions: $("battle-actions"),
     battleBtns: document.querySelectorAll(".battle-key[data-move]"),
     itemList: $("item-list"),
-    itemBack: $("item-back"),
+    itemBack: $("item-back") || null,
     itemListGrid: $("item-list-grid"),
     itemListAction: $("item-list-action"),
     itemListActionName: $("item-list-action-name"),
@@ -514,10 +514,10 @@
     const actionBox = isField ? el.fieldInvAction : el.itemListAction;
     const actionName = isField ? el.fieldInvActionName : el.itemListActionName;
     const grid = isField ? el.fieldInvGrid : el.itemListGrid;
-    const backBtn = isField ? el.fieldInvBack : el.itemBack;
+    const backBtn = isField ? el.fieldInvBack : null;
 
     grid.classList.add("hidden");
-    backBtn.classList.add("hidden");
+    if (backBtn) backBtn.classList.add("hidden");
     actionBox.classList.remove("hidden");
     actionName.textContent = `${itemName(item.id)} —— ${itemDesc(item.id)}`;
 
@@ -540,7 +540,7 @@
     el.fieldInvGrid.classList.remove("hidden");
     el.itemListGrid.classList.remove("hidden");
     el.fieldInvBack.classList.remove("hidden");
-    el.itemBack.classList.remove("hidden");
+    if (el.itemBack) el.itemBack.classList.remove("hidden");
     renderBagGrid(el.fieldInvGrid);
     renderBagGrid(el.itemListGrid);
   }
@@ -581,7 +581,7 @@
   function setKeysEnabled(on) {
     el.keys.forEach((k) => (k.disabled = !on));
     el.battleBtns.forEach((b) => (b.disabled = !on));
-    el.itemBack.disabled = !on;
+    if (el.itemBack) el.itemBack.disabled = !on;
     el.btnInv.disabled = !on;
   }
 
@@ -1491,7 +1491,7 @@
   });
   el.keys.forEach((k) => k.addEventListener("click", () => onKey(k.dataset.k)));
   el.battleBtns.forEach((b) => b.addEventListener("click", () => battleMove(b.dataset.move)));
-  el.itemBack.addEventListener("click", showBattleActions);
+  if (el.itemBack) el.itemBack.addEventListener("click", showBattleActions);
   el.btnInv.addEventListener("click", openFieldInv);
   el.fieldInvBack.addEventListener("click", closeFieldInv);
 
