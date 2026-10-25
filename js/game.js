@@ -1301,7 +1301,7 @@
       b.debuff = null;
     }
     } finally {
-      if (S.phase === "BATTLE") setKeysEnabled(true);
+      setKeysEnabled(S.phase === "BATTLE");
     }
   }
 
