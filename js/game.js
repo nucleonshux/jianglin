@@ -555,7 +555,7 @@
       el.freqNum.textContent = "ERR";
       log("频道串了。数字在抖，你听不清任何东西。", "bad");
       // 串台离开选择：留道具或扣精神
-      el.eventText.textContent = "你进错频道了。这里没有它。要离开，你得留下点什么。";
+      el.eventText.textContent = "频道串了。数字在抖，你听不清任何东西。你站在一个像祭坛的房间里，中间有个东西在等你留下什么。";
       el.eventOptions.innerHTML = "";
         const leaveItem = document.createElement("button");
         leaveItem.className = "px-btn";
