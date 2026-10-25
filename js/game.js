@@ -29,7 +29,7 @@
     keypadGrid: $("keypad-grid"),
     btnInv: $("btn-inv"),
     fieldInv: $("field-inv"),
-    fieldInvBack: $("field-inv-back"),
+    fieldInvBack: $("field-inv-back") || null,
     fieldInvGrid: $("field-inv-grid"),
     fieldInvAction: $("field-inv-action"),
     fieldInvActionName: $("field-inv-action-name"),
@@ -539,7 +539,7 @@
     el.itemListAction.classList.add("hidden");
     el.fieldInvGrid.classList.remove("hidden");
     el.itemListGrid.classList.remove("hidden");
-    el.fieldInvBack.classList.remove("hidden");
+    if (el.fieldInvBack) el.fieldInvBack.classList.remove("hidden");
     if (el.itemBack) el.itemBack.classList.remove("hidden");
     renderBagGrid(el.fieldInvGrid);
     renderBagGrid(el.itemListGrid);
@@ -1493,7 +1493,7 @@
   el.battleBtns.forEach((b) => b.addEventListener("click", () => battleMove(b.dataset.move)));
   if (el.itemBack) el.itemBack.addEventListener("click", showBattleActions);
   el.btnInv.addEventListener("click", openFieldInv);
-  el.fieldInvBack.addEventListener("click", closeFieldInv);
+  if (el.fieldInvBack) el.fieldInvBack.addEventListener("click", closeFieldInv);
 
   document.addEventListener("keydown", (e) => {
     if (!S) return;
