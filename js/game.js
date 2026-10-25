@@ -1500,5 +1500,25 @@
   });
 
   drawStatic(el.stageCanvas, 0.2);
+
+  // 持续雪花噪声动画
+  const noiseCanvas = $("noise-canvas");
+  const nctx = noiseCanvas.getContext("2d");
+  function tickNoise() {
+    const w = noiseCanvas.width, h = noiseCanvas.height;
+    nctx.clearRect(0, 0, w, h);
+    nctx.fillStyle = "rgba(255,255,255,0.5)";
+    for (let i = 0; i < 80; i++) {
+      nctx.fillRect(Math.random() * w, Math.random() * h, 1, 1);
+    }
+    // 偶尔水平错位
+    if (Math.random() < 0.1) {
+      nctx.fillStyle = "rgba(255,255,255,0.1)";
+      const y = Math.random() * h;
+      nctx.fillRect(0, y, w, 1);
+    }
+    requestAnimationFrame(tickNoise);
+  }
+  requestAnimationFrame(tickNoise);
 })();
 
