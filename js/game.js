@@ -555,6 +555,7 @@
   function showBattleActions() {
     el.itemList.classList.add("hidden");
     el.battleActions.classList.remove("hidden");
+    setKeysEnabled(true);
   }
   function showItemList() {
     el.battleActions.classList.add("hidden");
