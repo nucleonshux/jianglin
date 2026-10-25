@@ -491,6 +491,19 @@
       }
       gridEl.appendChild(slot);
     }
+    // 第6格=返回按钮
+    const back = document.createElement("button");
+    back.className = "key key-fn";
+    back.textContent = "返 回";
+    back.addEventListener("click", () => {
+      if (gridEl.id === "field-inv-grid") closeFieldInv();
+      else {
+        el.itemList.classList.add("hidden");
+        el.viewTuning.classList.remove("hidden");
+        el.battleActions.classList.remove("hidden");
+      }
+    });
+    gridEl.appendChild(back);
   }
 
   function openItemAction(idx, gridEl) {
