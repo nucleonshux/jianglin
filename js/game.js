@@ -1202,6 +1202,46 @@
   /* ---------- 事件绑定 ---------- */
   el.startBtn.addEventListener("click", startGame);
   el.restartBtn.addEventListener("click", startGame);
+
+  // 开场文字逐行显示
+  const introLines = [
+    "那天晚上，收音机自己响了。",
+    "不是电台。是某种……组织。",
+    "它从天空里慢慢飘过来，像一块正在成形的肉。",
+    "周围的东西开始变了。墙后面有人在说话，但那墙是我家的。",
+    "我手里这台旧收音机不一样——",
+    "拧动它，我就能去到那些频道里。",
+    "它一直在叫我。在一百个频道里，它在叫我的名字。",
+    "我必须找到它。",
+  ];
+  let introIdx = 0;
+  const introText = $("intro-text");
+  const introScreen = $("intro-screen");
+  const titleScreen = $("title-screen");
+
+  function showIntroLine() {
+    if (introIdx < introLines.length) {
+      introText.textContent += (introIdx > 0 ? "\n" : "") + introLines[introIdx];
+      introIdx++;
+      setTimeout(showIntroLine, 1200);
+    } else {
+      $("intro-hint").style.display = "block";
+    }
+  }
+  $("intro-hint").style.display = "none";
+  showIntroLine();
+
+  introScreen.addEventListener("click", () => {
+    if (introIdx < introLines.length) {
+      // 跳过逐行，直接显示全部
+      introText.textContent = introLines.join("\n");
+      introIdx = introLines.length;
+      $("intro-hint").style.display = "block";
+    } else {
+      introScreen.classList.add("hidden");
+      titleScreen.classList.remove("hidden");
+    }
+  });
   el.logUp.addEventListener("click", () => {
     el.logContent.scrollTop -= 40;
   });
