@@ -166,6 +166,19 @@ const GAME_DATA = {
       trinketChance: 1.0,
       trinkets: ["lead_lining", "fruit_knife"],
     },
+    {
+      id: "the_unseen",
+      name: "看不见的东西",
+      desc: "你听得到它，在哭。但你看不到它。",
+      sprite: "assets/sprites/unseen.png",
+      hp: 2,
+      aiWeights: [5, 2, 3],
+      spiritDamage: 8,
+      invisible: true,
+      attackTexts: ["它在你耳边哭。你打了个寒颤。", "你感觉到它贴在你脖子后面。"],
+      trinketChance: 0.4,
+      trinkets: ["black_tape"],
+    },
   ],
 
   /* ---------- 终极 BOSS ---------- */
@@ -185,6 +198,8 @@ const GAME_DATA = {
 
   /* ---------- 随机事件（直接执行，20个） ---------- */
   events: [
+    // 特殊事件：外国频道
+    { weight: 1, special: "foreign", text: "你串到了一个外国频道。电流声里有人在断断续续说话。他说三颗太阳都灭了。他说以后不会再有天亮了。四周有哭声，很轻，像从墙里渗出来的。地上有一把旧手电筒。", effect: { type: "give_trinket", trinket: "flashlight" } },
     // 无选择，直接发生（小事件）
     { weight: 1, text: "这里是海边。浪声一下一下，像有人在极远处替你数呼吸。你忘了刚才在怕什么。", effect: { type: "spirit", value: 5 }, luck: 2 },
     { weight: 1, text: "一张破沙发。弹簧扎人，但你还是坐了一会儿。有人在这上面等过谁。", effect: { type: "spirit", value: 3 }, luck: 1 },
@@ -326,6 +341,12 @@ const GAME_DATA = {
       desc: "刺耳。1倍伤害，但命中后回3精神。",
       mods: {},
       weapon: { base: 1, spiritOnHit: 3 },
+    },
+    flashlight: {
+      name: "手电筒",
+      desc: "旧的。能照出看不见的东西。1倍伤害，命中30%定住它一回合。",
+      mods: {},
+      weapon: { base: 1, stunChance: 0.3 },
     },
     hunter_notebook: {
       name: "猎人笔记",

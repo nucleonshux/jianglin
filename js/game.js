@@ -186,6 +186,10 @@
         S.spirit = Math.min(spiritMax(), S.spirit + spec.spiritOnHit);
         msg += `精神 +${spec.spiritOnHit}。`;
       }
+      if (spec.stunChance && Math.random() < spec.stunChance) {
+        msg += "它被光钉住了。";
+        b.stunned = true;
+      }
       totalDmg += d;
     }
     if (allWhiff) {
@@ -1143,6 +1147,20 @@
     if (move === "flee") { doFlee(); return; }
 
     const b = S.battle;
+    const m = b.monster;
+
+    // 隐形怪物：没手电筒不能攻击防御闪避
+    if (m.invisible) {
+      const hasFlashlight = equippedList().includes("flashlight");
+      if (!hasFlashlight && move !== "flee") {
+        S.spirit -= 15;
+        log("你看不见它。你挥了个空。精神 -15。", "bad");
+        updateHUD();
+        checkGameOver();
+        return;
+      }
+    }
+
     // debuff 检查
     if (b.debuff === "disableAttack" && move === "attack") {
       log("你下不了手。", "bad");
@@ -1162,14 +1180,21 @@
     const m = b.monster;
 
     // 怪物按AI权重选动作 [attack, defend, dodge]
-    const w = m.aiWeights;
-    const moves = ["attack", "defend", "dodge"];
+    let ai;
+    if (b.stunned) {
+      ai = "defend";
+      log("它被光钉住了，下不了手。", "good");
+      b.stunned = false;
+    } else {
+      const w = m.aiWeights;
+      const moves = ["attack", "defend", "dodge"];
     const total = w[0] + w[1] + w[2];
     let r = Math.random() * total;
-    let ai = "attack";
+    ai = "attack";
     for (let i = 0; i < 3; i++) {
       r -= w[i];
       if (r <= 0) { ai = moves[i]; break; }
+    }
     }
 
     log(`你【${GAME_DATA.moves[move]}】，它【${GAME_DATA.moves[ai]}】。`, "system");
