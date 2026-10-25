@@ -1156,6 +1156,7 @@
     }
 
     setKeysEnabled(false);
+    try {
     const m = b.monster;
 
     // 怪物按AI权重选动作 [attack, defend, dodge]
@@ -1297,7 +1298,9 @@
     } else if (b.debuff) {
       b.debuff = null;
     }
-    setKeysEnabled(true);
+    } finally {
+      if (S.phase === "BATTLE") setKeysEnabled(true);
+    }
   }
 
   function doFlee() {
