@@ -343,8 +343,8 @@ html, body {
 #field-inv-grid, #item-list-grid {
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 4px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
 }
 .slot {
   background: #111;
