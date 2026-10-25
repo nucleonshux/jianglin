@@ -261,6 +261,11 @@
     ctx.clearRect(0, 0, cw, ch);
     ctx.fillStyle = "#000";
     ctx.fillRect(0, 0, cw, ch);
+    // 怪物整体随机抖动（扭曲）
+    const jx = (Math.random() - 0.5) * 3;
+    const jy = (Math.random() - 0.5) * 3;
+    ctx.save();
+    ctx.translate(jx, jy);
     ctx.fillStyle = "#fff";
     const cx = cw / 2, cy = ch / 2;
     const s = Math.min(cw, ch) / 20; // 像素单位
@@ -316,17 +321,14 @@
       }
     }
 
-    // 雪花噪声叠加
-    ctx.fillStyle = "rgba(255,255,255,0.6)";
-    for (let i = 0; i < 100; i++) {
-      ctx.fillRect(Math.random() * cw, Math.random() * ch, 1, 1);
+    // 怪物周围雪花噪声（不是全屏）
+    ctx.fillStyle = "rgba(255,255,255,0.7)";
+    for (let i = 0; i < 40; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const r = Math.random() * 6 * s;
+      ctx.fillRect(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r, 1, 1);
     }
-    // 水平错位条
-    for (let i = 0; i < 5; i++) {
-      const y = Math.random() * ch;
-      ctx.fillStyle = "rgba(255,255,255,0.15)";
-      ctx.fillRect(0, y, cw, 1 + Math.random() * 2);
-    }
+    ctx.restore();
   }
 
   function showSprite(src, fallbackText) {
