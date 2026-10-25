@@ -491,6 +491,7 @@ html, body {
   line-height: 1.5;
 }
 #battle-actions { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.span2 { grid-column: span 2; }
 .battle-btn { width: 100%; }
 
 #end-text {
