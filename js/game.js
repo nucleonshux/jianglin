@@ -741,6 +741,8 @@
       if (picked.luck) S.luck += picked.luck;
       log(picked.text + (suffix ? " " + suffix : ""), "system");
       updateHUD();
+      checkGameOver();
+      if (S.phase === "OVER") return;
       setTimeout(() => {
         if (S.phase === "RESOLVING") {
           S.phase = "TUNING";
@@ -897,6 +899,8 @@
       log(`★ ${itemName(result.give)} —— ${itemDesc(result.give)}`, "good");
     }
     updateHUD();
+    checkGameOver();
+    if (S.phase === "OVER") return;
     setTimeout(() => {
       if (S.phase === "RESOLVING") {
         S.phase = "TUNING";
