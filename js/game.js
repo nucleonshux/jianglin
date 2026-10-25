@@ -936,15 +936,15 @@
     const b = S.battle;
     // debuff 检查
     if (b.debuff === "disableAttack" && move === "attack") {
-      log("它的声音堵在你喉咙里。你动不了手。", "bad");
+      log("你下不了手。", "bad");
       return;
     }
     if (b.debuff === "disableDefend" && move === "defend") {
-      log("它的节奏让你站不住。你防不住。", "bad");
+      log("你挡不住。", "bad");
       return;
     }
     if (b.debuff === "disableDodge" && move === "dodge") {
-      log("它的歌声缠住了你的脚。你闪不开。", "bad");
+      log("你跑不掉。", "bad");
       return;
     }
 
