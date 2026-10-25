@@ -673,6 +673,8 @@
     } else if (Math.random() < 0.3) {
       // 空频道
       log("这个频道是空的。你站在一片不存在的空间里，什么也没发生。", "system");
+      checkGameOver();
+      if (S.phase === "OVER") return;
       setTimeout(() => {
         if (S.phase === "RESOLVING") {
           S.phase = "TUNING";
@@ -695,6 +697,8 @@
     const pool = GAME_DATA.events.filter((e) => !S.usedEvents.includes(e.text));
     if (pool.length === 0) {
       log("这里什么都没有。只有静电。", "system");
+      checkGameOver();
+      if (S.phase === "OVER") return;
       setTimeout(() => {
         if (S.phase === "RESOLVING") {
           S.phase = "TUNING";
