@@ -342,9 +342,13 @@ html, body {
 }
 #field-inv-grid, #item-list-grid {
   flex: 1;
-  display: grid !important;
-  grid-template-columns: repeat(3, 1fr) !important;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
   gap: 6px;
+  align-content: start;
+}
+#field-inv-grid .back-row, #item-list-grid .back-row {
+  grid-column: 1 / -1;
 }
 .slot {
   background: #111;

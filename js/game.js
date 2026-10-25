@@ -491,9 +491,9 @@
       }
       gridEl.appendChild(slot);
     }
-    // 第6格=返回按钮
+    // 返回按钮横跨
     const back = document.createElement("button");
-    back.className = "key key-fn";
+    back.className = "key key-fn back-row";
     back.textContent = "返 回";
     back.addEventListener("click", () => {
       if (gridEl.id === "field-inv-grid") closeFieldInv();
