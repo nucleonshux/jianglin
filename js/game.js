@@ -1117,11 +1117,7 @@
     // 程序化绘制怪物像素图
     el.stageText.classList.add("hidden");
     el.stageCanvas.classList.remove("hidden");
-    const ctx = el.stageCanvas.getContext("2d");
-    drawMonster(ctx, monster.id, el.stageCanvas.width, el.stageCanvas.height);
-    // 怪物入场闪一下
-    setTimeout(() => drawMonster(ctx, monster.id, el.stageCanvas.width, el.stageCanvas.height), 100);
-    setTimeout(() => drawMonster(ctx, monster.id, el.stageCanvas.width, el.stageCanvas.height), 200);
+    currentMonster = monster;
     el.battlePrompt.textContent = monster.desc;
     log(pick("enc_normal") || monster.desc, "system");
     setKeysEnabled(true);
@@ -1379,6 +1375,7 @@
     }
 
     S.battle = null;
+    currentMonster = null;
 
     S.phase = "TUNING";
     showNumpad();
@@ -1504,6 +1501,7 @@
   // 持续雪花噪声动画
   const noiseCanvas = $("noise-canvas");
   const nctx = noiseCanvas.getContext("2d");
+  let currentMonster = null;
   function tickNoise() {
     const w = noiseCanvas.width, h = noiseCanvas.height;
     nctx.clearRect(0, 0, w, h);
@@ -1516,6 +1514,11 @@
       nctx.fillStyle = "rgba(255,255,255,0.1)";
       const y = Math.random() * h;
       nctx.fillRect(0, y, w, 1);
+    }
+    // 持续重绘怪物
+    if (currentMonster && !el.stageCanvas.classList.contains("hidden")) {
+      const mctx = el.stageCanvas.getContext("2d");
+      drawMonster(mctx, currentMonster.id, el.stageCanvas.width, el.stageCanvas.height);
     }
     requestAnimationFrame(tickNoise);
   }
