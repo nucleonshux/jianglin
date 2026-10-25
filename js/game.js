@@ -554,12 +554,9 @@
       setLights(null);
       el.freqNum.textContent = "ERR";
       log("频道串了。数字在抖，你听不清任何东西。", "bad");
-      showEventModal("你进错频道了。这里没有它。要离开，你得留下点什么。");
-      // 串台离开：留道具或扣精神
-      setTimeout(() => {
-        // 串台离开选择：留道具或扣精神
-        el.eventText.textContent = "离开这个频道，你想留下什么？";
-        el.eventOptions.innerHTML = "";
+      // 串台离开选择：留道具或扣精神
+      el.eventText.textContent = "你进错频道了。这里没有它。要离开，你得留下点什么。";
+      el.eventOptions.innerHTML = "";
         const leaveItem = document.createElement("button");
         leaveItem.className = "px-btn";
         leaveItem.textContent = "留下背包里的物品";
@@ -607,7 +604,6 @@
         el.eventOptions.appendChild(leaveItem);
         el.eventOptions.appendChild(leaveSpirit);
         el.eventOverlay.classList.remove("hidden");
-      }, 800);
       return;
     }
 
