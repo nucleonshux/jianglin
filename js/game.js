@@ -992,7 +992,8 @@
           const atk = performAttack();
           if (!atk.whiffed) {
             b.hp -= atk.dmg;
-            log(pick(atk.dmg > 1 ? "clash_win" : "clash_win_bare") + ` ${atk.extraMsg}`, "good");
+            const hasWeapon = !!(S.weapon1 || S.weapon2);
+            log(pick(hasWeapon ? "clash_win" : "clash_win_bare") + ` ${atk.extraMsg}`, "good");
           } else {
             log(pick("clash_win_bare") + " 它退了一步，但你没打中。", "system");
           }
@@ -1050,7 +1051,8 @@
         const atk = performAttack();
         if (!atk.whiffed) {
           b.hp -= atk.dmg;
-          log(pick(atk.dmg > 1 ? "hit_foe" : "hit_foe_bare") + ` ${atk.extraMsg}`, "good");
+          const hasWeapon = !!(S.weapon1 || S.weapon2);
+          log(pick(hasWeapon ? "hit_foe" : "hit_foe_bare") + ` ${atk.extraMsg}`, "good");
         } else {
           log(pick("miss"), "system");
         }
