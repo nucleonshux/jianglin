@@ -190,7 +190,7 @@ const GAME_DATA = {
     { weight: 1, text: "一张破沙发。弹簧扎人，但你还是坐了一会儿。有人在这上面等过谁。", effect: { type: "spirit", value: 3 }, luck: 1 },
     { weight: 2, text: "公园长椅。树叶的影子在你手背上走。你闭了一会儿眼。", effect: { type: "spirit", value: 4 }, luck: 2 },
     { weight: 2, text: "雨打在窗户上。你听着听着，忘了自己为什么在这里。", effect: { type: "spirit", value: 4 }, luck: 1 },
-    { weight: 2, text: "楼道灯坏了。你摸着黑走，脚下是自己的家。", effect: { type: "spirit", value: 3 }, luck: 1 },
+    { weight: 2, text: "楼道灯坏了。你摸着黑走，脚下是你熟悉的台阶。", effect: { type: "spirit", value: 3 }, luck: 1 },
     // 负面小事件
     { weight: 2, text: "钢琴自己在弹。你认出那首曲子——是你葬礼上会放的那首。", effect: { type: "spirit", value: -5 }, luck: -1 },
     { weight: 2, text: "走廊的灯一闪一闪。你的影子比你慢半拍。", effect: { type: "spirit", value: -6 }, luck: -1 },
@@ -537,6 +537,16 @@ const GAME_DATA = {
       "你们同时动了，又同时停住。",
       "谁也没碰到谁。静电在中间滋滋响。",
       "它歪了歪头。你也没敢动。",
+    ],
+    // 你闪避，它防御
+    dodge_vs_defend: [
+      "你闪到一边。它缩成一团。谁也没碰到谁。",
+      "你退了一步。它也防着。你们隔着一片静电。",
+    ],
+    // 你防御，它闪避
+    defend_vs_dodge: [
+      "你沉住气。它闪了。谁也没碰到谁。",
+      "你挡着。它退开了。你们隔着一片静电。",
     ],
     // 击杀普通怪
     kill_normal: [

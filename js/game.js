@@ -1058,8 +1058,9 @@
       } else if (move === "defend") {
         log(pick("round_draw"), "system");
       } else {
-        S.spirit = Math.min(spiritMax(), S.spirit + 3);
-        log(pick("dodge_ok") + " 精神 +3。", "good");
+        // 你闪避，它防御：谁也没碰到谁
+        S.spirit = Math.min(spiritMax(), S.spirit + 2);
+        log(pick("dodge_vs_defend") + " 精神 +2。", "good");
       }
     } else {
       // 怪物闪避
@@ -1081,8 +1082,9 @@
           log(pick("miss"), "system");
         }
       } else if (move === "defend") {
+        // 你防御，它闪避：谁也没碰到谁
         S.spirit = Math.min(spiritMax(), S.spirit + 2);
-        log(pick("defend_ok") + " 精神 +2。", "good");
+        log(pick("defend_vs_dodge") + " 精神 +2。", "good");
       } else {
         log(pick("round_draw"), "system");
       }
