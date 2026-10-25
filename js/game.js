@@ -251,6 +251,78 @@
     ctx.putImageData(img, 0, 0);
   }
 
+  function drawMonster(ctx, monsterId, cw, ch) {
+    ctx.clearRect(0, 0, cw, ch);
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, cw, ch);
+    ctx.fillStyle = "#fff";
+    const cx = cw / 2, cy = ch / 2;
+    const s = Math.min(cw, ch) / 20; // 像素单位
+
+    // 基础像素人形（由小方块组成）
+    function pixel(x, y, w, h) {
+      ctx.fillRect(cx + x * s, cy + y * s, w * s, h * s);
+    }
+
+    if (monsterId === "static_man") {
+      // 静电人：散点人形
+      for (let i = 0; i < 60; i++) {
+        const x = (Math.random() - 0.5) * 8;
+        const y = (Math.random() - 0.5) * 12;
+        pixel(x, y, 0.3, 0.3);
+      }
+    } else if (monsterId === "tuner_bat") {
+      // 失智听众：戴耳机
+      pixel(-1, -3, 2, 2); // 头
+      pixel(-1.5, -2.5, 0.5, 0.5); // 耳机左
+      pixel(1, -2.5, 0.5, 0.5); // 耳机右
+      pixel(-0.8, -1, 1.6, 3); // 身体
+    } else if (monsterId === "white_noise_girl") {
+      // 白噪女孩：长发
+      pixel(-1, -3, 2, 2); // 头
+      pixel(-1.5, -3, 0.5, 4); // 发左
+      pixel(1, -3, 0.5, 4); // 发右
+      pixel(-0.8, -1, 1.6, 4); // 身体
+    } else if (monsterId === "the_listener") {
+      // 聆听者：大头
+      pixel(-1.5, -3.5, 3, 3); // 大头
+      pixel(-0.8, -0.5, 1.6, 3); // 身体
+      pixel(-1, -2, 0.5, 0.3); // 眼睛
+      pixel(0.5, -2, 0.5, 0.3);
+    } else if (monsterId === "broadcaster") {
+      // 广播员：带麦克风
+      pixel(-1, -3, 2, 2);
+      pixel(-0.8, -1, 1.6, 3);
+      pixel(1, 0, 0.3, 2); // 麦克风杆
+      pixel(0.8, -0.5, 0.7, 0.5); // 麦头
+    } else if (monsterId === "colossus") {
+      // 巨像：大块头
+      pixel(-2, -4, 4, 3);
+      pixel(-2.5, -1, 5, 5);
+      pixel(-3, 1, 0.5, 3); // 左手臂
+      pixel(2.5, 1, 0.5, 3); // 右手臂
+    } else if (monsterId === "the_descent") {
+      // 降临之物：一团扭曲组织
+      for (let i = 0; i < 80; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const r = Math.random() * 5;
+        pixel(Math.cos(angle) * r, Math.sin(angle) * r, 0.4, 0.4);
+      }
+    }
+
+    // 雪花噪声叠加
+    ctx.fillStyle = "rgba(255,255,255,0.6)";
+    for (let i = 0; i < 100; i++) {
+      ctx.fillRect(Math.random() * cw, Math.random() * ch, 1, 1);
+    }
+    // 水平错位条
+    for (let i = 0; i < 5; i++) {
+      const y = Math.random() * ch;
+      ctx.fillStyle = "rgba(255,255,255,0.15)";
+      ctx.fillRect(0, y, cw, 1 + Math.random() * 2);
+    }
+  }
+
   function showSprite(src, fallbackText) {
     const img = new Image();
     img.onload = () => {
@@ -950,7 +1022,14 @@
     S.phase = "BATTLE";
     S.battle = { monster, hp: monster.hp, isBoss, isMiniboss, debuff: null, debuffNext: null };
     showBattlePad();
-    showSprite(monster.sprite, monster.name[0] + "？");
+    // 程序化绘制怪物像素图
+    el.stageText.classList.add("hidden");
+    el.stageCanvas.classList.remove("hidden");
+    const ctx = el.stageCanvas.getContext("2d");
+    drawMonster(ctx, monster.id, el.stageCanvas.width, el.stageCanvas.height);
+    // 怪物入场闪一下
+    setTimeout(() => drawMonster(ctx, monster.id, el.stageCanvas.width, el.stageCanvas.height), 100);
+    setTimeout(() => drawMonster(ctx, monster.id, el.stageCanvas.width, el.stageCanvas.height), 200);
     el.battlePrompt.textContent = monster.desc;
     log(pick("enc_normal") || monster.desc, "system");
     setKeysEnabled(true);
