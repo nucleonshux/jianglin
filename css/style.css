@@ -388,7 +388,7 @@ html, body {
 
 #title-screen { background: #000; }
 #intro-screen { background: #000; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; }
-.intro-text { font-size: 14px; color: #ccc; line-height: 2; max-width: 300px; white-space: pre-line; min-height: 180px; }
+.intro-text { font-size: 14px; color: #ccc; line-height: 2; max-width: 300px; white-space: pre-line; min-height: 180px; text-align: center; }
 .intro-hint { font-size: 11px; color: #555; margin-top: 30px; animation: blink 2s infinite; }
 .title-art { text-align: center; max-width: 320px; }
 .title-logo {
