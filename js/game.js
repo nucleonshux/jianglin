@@ -755,6 +755,7 @@
   function showBagDrop(callback) {
     el.eventText.textContent = "留下哪件东西？";
     el.eventOptions.innerHTML = "";
+    // 背包里的
     S.bag.forEach((item, idx) => {
       const btn = document.createElement("button");
       btn.className = "px-btn";
@@ -766,10 +767,29 @@
       });
       el.eventOptions.appendChild(btn);
     });
-    if (S.bag.length === 0) {
+    // 已装备的
+    const equippedSlots = [
+      { slot: "weapon1", id: S.weapon1 },
+      { slot: "weapon2", id: S.weapon2 },
+      { slot: "trinket1", id: S.trinket1 },
+      { slot: "trinket2", id: S.trinket2 },
+    ];
+    equippedSlots.forEach((e) => {
+      if (!e.id) return;
+      const btn = document.createElement("button");
+      btn.className = "px-btn";
+      btn.textContent = `${itemName(e.id)}（已装备）`;
+      btn.addEventListener("click", () => {
+        S[e.slot] = null;
+        el.eventOverlay.classList.add("hidden");
+        callback();
+      });
+      el.eventOptions.appendChild(btn);
+    });
+    if (S.bag.length === 0 && equippedSlots.every((e) => !e.id)) {
       const none = document.createElement("button");
       none.className = "px-btn";
-      none.textContent = "背包是空的";
+      none.textContent = "你什么都没有";
       none.addEventListener("click", () => {
         el.eventOverlay.classList.add("hidden");
         S.spirit -= 15;
