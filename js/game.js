@@ -1272,12 +1272,20 @@
     // 怪物技能触发
     if (m.skill && Math.random() < (m.skillChance || 0.2)) {
       b.debuff = m.skill;
-      const debuffTexts = {
-        disableAttack: "它的声音在你脑子里响成一片。下回合你下不了手。",
-        disableDefend: "它的节奏让你站不稳。下回合你挡不住。",
-        disableDodge: "它的歌声缠住了你的脚。下回合你跑不掉。",
+      const isBig = isBoss || b.isMiniboss;
+      const debuffByMonster = {
+        disableAttack: isBig
+          ? ["它的低语灌满了你的颅腔。你的手抬不起来。", "它在你脑子里说了一个词。你听懂了，但你动不了。"]
+          : ["它的声音在你脑子里响成一片。下回合你下不了手。", "它哼的那个调子卡在你耳朵里。你下不去手。"],
+        disableDefend: isBig
+          ? ["它的存在压得你站不住。你怎么挡？", "巨物的阴影罩下来。你的腿软了。"]
+          : ["它的节奏让你站不稳。下回合你挡不住。", "它晃了晃头。你脚下一滑。"],
+        disableDodge: isBig
+          ? ["它的温度漫开，像沥青裹住你。你跑不掉。", "它的触须在地上铺开。你动不了。"]
+          : ["它的歌声缠住了你的脚。下回合你跑不掉。", "她的声音粘在你鞋底。你迈不开步。"],
       };
-      log(debuffTexts[m.skill] || "它对你做了什么。", "bad");
+      const arr = debuffByMonster[m.skill] || ["它对你做了什么。"];
+      log(pick(arr), "bad");
     } else if (b.debuff) {
       b.debuff = null;
     }
