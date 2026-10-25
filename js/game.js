@@ -993,7 +993,15 @@
           if (!atk.whiffed) {
             b.hp -= atk.dmg;
             const hasWeapon = !!(S.weapon1 || S.weapon2);
-            log(pick(hasWeapon ? "clash_win" : "clash_win_bare") + ` ${atk.extraMsg}`, "good");
+            let hitText;
+            if (hasWeapon) {
+              const wid = S.weapon1 || S.weapon2;
+              const wTexts = GAME_DATA.TEXTS.weaponHit[wid];
+              hitText = wTexts ? pick(wTexts) : pick("clash_win");
+            } else {
+              hitText = pick("clash_win_bare");
+            }
+            log(hitText + ` ${atk.extraMsg}`, "good");
           } else {
             log(pick("clash_win_bare") + " 它退了一步，但你没打中。", "system");
           }
@@ -1052,7 +1060,15 @@
         if (!atk.whiffed) {
           b.hp -= atk.dmg;
           const hasWeapon = !!(S.weapon1 || S.weapon2);
-          log(pick(hasWeapon ? "hit_foe" : "hit_foe_bare") + ` ${atk.extraMsg}`, "good");
+          let hitText;
+          if (hasWeapon) {
+            const wid = S.weapon1 || S.weapon2;
+            const wTexts = GAME_DATA.TEXTS.weaponHit[wid];
+            hitText = wTexts ? pick(wTexts) : pick("hit_foe");
+          } else {
+            hitText = pick("hit_foe_bare");
+          }
+          log(hitText + ` ${atk.extraMsg}`, "good");
         } else {
           log(pick("miss"), "system");
         }
