@@ -1130,6 +1130,8 @@
     el.stageText.classList.add("hidden");
     el.stageCanvas.classList.remove("hidden");
     currentMonster = monster;
+    $("monster-name").textContent = monster.name;
+    $("monster-name").classList.remove("hidden");
     el.battlePrompt.textContent = monster.desc;
     log(pick("enc_normal") || monster.desc, "system");
     setKeysEnabled(true);
@@ -1395,6 +1397,7 @@
 
     S.battle = null;
     currentMonster = null;
+    $("monster-name").classList.add("hidden");
 
     S.phase = "TUNING";
     showNumpad();

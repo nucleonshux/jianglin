@@ -103,6 +103,13 @@ html, body {
   justify-content: space-between;
   align-items: center;
 }
+#monster-name {
+  font-size: 12px;
+  color: #e8e8e8;
+  text-align: left;
+  padding: 2px 4px;
+  letter-spacing: 2px;
+}
 
 #freq-display {
   font-size: 22px;
