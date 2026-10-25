@@ -366,8 +366,8 @@ const GAME_DATA = {
     },
     noise_canceler: {
       name: "抗噪耳塞",
-      desc: "戴上后，即使在白噪声里也能听清高低。",
-      mods: { ignoreNoise: true },
+      desc: "戴上后，即使在白噪声里也能听清高低。50%概率调频不扣精神。",
+      mods: { ignoreNoise: true, tuningNoCost: 0.5 },
     },
     weird_fuse: {
       name: "异常保险丝",

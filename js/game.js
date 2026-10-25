@@ -470,6 +470,15 @@
     if (item.count <= 0) S.bag.splice(bagIdx, 1);
     log(pick("use_item") + `${c.name}，精神 +${val}。`, "good");
     updateHUD();
+    // 战斗中用道具消耗一回合：怪物趁机攻击
+    if (S.phase === "BATTLE" && S.battle) {
+      const m = S.battle.monster;
+      const dmg = m.spiritDamage;
+      S.spirit -= dmg;
+      log(`它趁你吃东西的功夫扑了过来。精神 -${dmg}。`, "bad");
+      updateHUD();
+      checkGameOver();
+    }
   }
 
   function dropItem(bagIdx) {
@@ -640,7 +649,11 @@
 
     S.tries -= 1;
     S.timesTuned += 1;
-    S.spirit -= GAME_DATA.config.spiritPerTune;
+    const noCost = equippedList().some((id) => {
+      const t = GAME_DATA.trinkets[id];
+      return t && t.mods && t.mods.tuningNoCost && Math.random() < t.mods.tuningNoCost;
+    });
+    if (!noCost) S.spirit -= GAME_DATA.config.spiritPerTune;
 
     // 串台：开局50必定触发，其他5%概率
     const isStatic = (S.timesTuned === 1 && n === 50) || Math.random() < 0.05;
