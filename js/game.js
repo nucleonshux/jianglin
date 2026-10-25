@@ -497,11 +497,7 @@
     back.textContent = "返 回";
     back.addEventListener("click", () => {
       if (gridEl.id === "field-inv-grid") closeFieldInv();
-      else {
-        el.itemList.classList.add("hidden");
-        el.viewTuning.classList.remove("hidden");
-        el.battleActions.classList.remove("hidden");
-      }
+      else showBattleActions();
     });
     gridEl.appendChild(back);
   }
@@ -1304,6 +1300,10 @@
   }
 
   function doFlee() {
+    if (S.battle.isBoss) {
+      log("它堵住了所有出口。你跑不掉。", "bad");
+      return;
+    }
     setKeysEnabled(false);
     const noPenalty = equippedList().some((id) => {
       const t = GAME_DATA.trinkets[id];
