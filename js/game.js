@@ -75,10 +75,16 @@
     return t ? t.desc : "";
   }
   function itemIcon(id) {
-    const t = itemType(id);
-    if (t === "consumable") return "◆";
-    if (t === "weapon") return "⚔";
-    return "✦";
+    const icons = {
+      water: "💧", cracker: "▤", soda: "◉", choco: "■",
+      fruit_knife: "🔪", screwdriver: "⊢", glass_shard: "◣", wrench: "🔧",
+      tuning_fork: "⋔", old_mic: "🎤", colossus_fist: "✊",
+      tin_ear: "◉", lead_lining: "▓", crystal_diode: "◆",
+      third_eye: "👁", old_radio: "📻", iron_stomach: "▣",
+      black_tape: "▬", dirty_bandage: "⊜", noise_canceler: "♫",
+      weird_fuse: "⚡", static_heart: "♥",
+    };
+    return icons[id] || "?";
   }
 
   /* ---------- 游戏状态 ---------- */
