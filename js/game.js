@@ -557,13 +557,27 @@
       showEventModal("你进错频道了。这里没有它。要离开，你得留下点什么。");
       // 串台离开：留道具或扣精神
       setTimeout(() => {
-        showSlotChoice("trinket", [null, null], (slot) => {
-          // 简单处理：扣15精神离开，30%概率获得异常保险丝
-          S.spirit -= 15;
-          log("你在这个频道里丢下了一点东西。精神 -15。", "bad");
-          if (Math.random() < 0.3) {
-            addToBag("weird_fuse");
-            log("★ 异常保险丝 —— 串台里捡的。闪避成功率 +20%。", "good");
+        // 串台离开选择：留道具或扣精神
+        el.eventText.textContent = "离开这个频道，你想留下什么？";
+        el.eventOptions.innerHTML = "";
+        const leaveItem = document.createElement("button");
+        leaveItem.className = "px-btn";
+        leaveItem.textContent = "留下背包里的物品";
+        leaveItem.addEventListener("click", () => {
+          el.eventOverlay.classList.add("hidden");
+          // 打开背包选一个物品丢掉
+          if (S.bag.length === 0) {
+            log("你背包里什么都没有。只能留下精神了。", "bad");
+            S.spirit -= 15;
+            log("精神 -15。", "bad");
+          } else {
+            showBagDrop(() => {
+              log("你丢下了一件东西。它收下了。", "system");
+              if (Math.random() < 0.4) {
+                addToBag("weird_fuse");
+                log("★ 异常保险丝 —— 串台里捡的。闪避成功率 +20%。", "good");
+              }
+            });
           }
           updateHUD();
           checkGameOver();
@@ -574,6 +588,25 @@
             showNumpad();
           }
         });
+        const leaveSpirit = document.createElement("button");
+        leaveSpirit.className = "px-btn";
+        leaveSpirit.textContent = "直接离开（精神-15）";
+        leaveSpirit.addEventListener("click", () => {
+          el.eventOverlay.classList.add("hidden");
+          S.spirit -= 15;
+          log("你硬挤了出去。精神 -15。", "bad");
+          updateHUD();
+          checkGameOver();
+          if (S.phase === "RESOLVING") {
+            S.phase = "TUNING";
+            setKeysEnabled(true);
+            setInput("");
+            showNumpad();
+          }
+        });
+        el.eventOptions.appendChild(leaveItem);
+        el.eventOptions.appendChild(leaveSpirit);
+        el.eventOverlay.classList.remove("hidden");
       }, 800);
       return;
     }
@@ -721,6 +754,42 @@
         }
       }, 900);
     }
+  }
+
+  function showBagDrop(callback) {
+    el.eventText.textContent = "留下哪件东西？";
+    el.eventOptions.innerHTML = "";
+    S.bag.forEach((item, idx) => {
+      const btn = document.createElement("button");
+      btn.className = "px-btn";
+      btn.textContent = `${itemName(item.id)}${item.count > 1 ? " x" + item.count : ""}`;
+      btn.addEventListener("click", () => {
+        S.bag.splice(idx, 1);
+        el.eventOverlay.classList.add("hidden");
+        callback();
+      });
+      el.eventOptions.appendChild(btn);
+    });
+    if (S.bag.length === 0) {
+      const none = document.createElement("button");
+      none.className = "px-btn";
+      none.textContent = "背包是空的";
+      none.addEventListener("click", () => {
+        el.eventOverlay.classList.add("hidden");
+        S.spirit -= 15;
+        log("精神 -15。", "bad");
+        updateHUD();
+        checkGameOver();
+        if (S.phase === "RESOLVING") {
+          S.phase = "TUNING";
+          setKeysEnabled(true);
+          setInput("");
+          showNumpad();
+        }
+      });
+      el.eventOptions.appendChild(none);
+    }
+    el.eventOverlay.classList.remove("hidden");
   }
 
   function showSlotChoice(kind, ids, callback) {
