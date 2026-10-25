@@ -1296,7 +1296,7 @@
     } else if (b.debuff) {
       b.debuff = null;
     }
-    setTimeout(() => setKeysEnabled(true), 300);
+    setKeysEnabled(true);
   }
 
   function doFlee() {
