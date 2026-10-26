@@ -504,9 +504,9 @@ html, body {
   margin-bottom: 16px;
   line-height: 1.5;
 }
-#battle-actions { flex: 1; display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
-#battle-actions .battle-key:nth-child(-n+3) { grid-column: span 2; }
-#battle-actions .battle-key:nth-child(n+4) { grid-column: span 3; }
+#battle-actions { flex: 1; display: grid !important; grid-template-columns: repeat(6, 1fr) !important; gap: 6px; }
+#battle-actions .battle-key:nth-child(-n+3) { grid-column: span 2 !important; }
+#battle-actions .battle-key:nth-child(n+4) { grid-column: span 3 !important; }
 .battle-btn { width: 100%; }
 
 #end-text {
