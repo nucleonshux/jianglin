@@ -352,7 +352,10 @@ html, body {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 6px;
-  align-content: start;
+  align-content: center;
+}
+#field-inv-grid .slot, #item-list-grid .slot {
+  aspect-ratio: 1;
 }
 #field-inv-grid .back-row, #item-list-grid .back-row {
   grid-column: 1 / -1;
@@ -502,7 +505,8 @@ html, body {
   line-height: 1.5;
 }
 #battle-actions { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-.span2 { grid-column: span 2; }
+#battle-actions .battle-key:nth-child(4) { grid-column: 1 / span 2; }
+#battle-actions .battle-key:nth-child(5) { grid-column: 3; }
 .battle-btn { width: 100%; }
 
 #end-text {

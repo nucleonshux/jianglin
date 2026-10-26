@@ -199,7 +199,11 @@ const GAME_DATA = {
   /* ---------- 随机事件（直接执行，20个） ---------- */
   events: [
     // 特殊事件：外国频道
-    { weight: 1, special: "foreign", text: "你串到了一个外国频道。电流声里有人在断断续续说话。他说三颗太阳都灭了。他说以后不会再有天亮了。四周有哭声，很轻，像从墙里渗出来的。地上有一把旧手电筒。", effect: { type: "give_trinket", trinket: "flashlight" } },
+    { weight: 1, text: "你串到了一个外国频道。电流声里有人在断断续续说话。他说三颗太阳都灭了。他说以后不会再有天亮了。四周有哭声，很轻，像从墙里渗出来的。墙上挂着一张照片，照片里有个东西在看你。",
+      options: [
+        { text: "凑近看那张照片", effect: { type: "give_trinket", trinket: "flashlight" }, success: "照片背后别着一把旧手电筒。你把它扯了下来。★ 手电筒", fail: "照片里的东西动了一下。你后退了一步。但地上确实有把旧手电筒。★ 手电筒", luck: 0 },
+        { text: "别管它，走", effect: { type: "spirit", value: -5 }, success: "你走了。但你总觉得墙上多了双眼睛。（精神 -5）", fail: "你走了。但你总觉得墙上多了双眼睛。（精神 -5）", luck: 0 },
+      ] },
     // 无选择，直接发生（小事件）
     { weight: 1, text: "这里是海边。浪声一下一下，像有人在极远处替你数呼吸。你忘了刚才在怕什么。", effect: { type: "spirit", value: 5 }, luck: 2 },
     { weight: 1, text: "一张破沙发。弹簧扎人，但你还是坐了一会儿。有人在这上面等过谁。", effect: { type: "spirit", value: 3 }, luck: 1 },
@@ -395,22 +399,22 @@ const GAME_DATA = {
       desc: "精神上限 +10，减伤 10%。",
       mods: { spiritMax: 10, dmgReduce: 0.1 },
     },
-    /* ---------- 神器（装上取不下来） ---------- */
+    /* ---------- 诅咒饰品（装上取不下来） ---------- */
     third_eye: {
       name: "第三只眼",
-      desc: "【神器】攻击不会挥空，但精神上限 -20。它正在你额头上睁开。",
+      desc: "攻击不会挥空，但精神上限 -20。它正在你额头上睁开。",
       mods: { spiritMax: -20, noWhiff: true },
       cursed: true,
     },
     old_radio: {
       name: "旧无线电",
-      desc: "【神器】每次调频后回5精神，但更容易遇怪。它在你口袋里自己响。",
+      desc: "每次调频后回5精神，但更容易遇怪。它在你口袋里自己响。",
       mods: { spiritRegen: 5, aggro: true },
       cursed: true,
     },
     iron_stomach: {
       name: "铁胃",
-      desc: "【神器】吃任何东西效果翻倍，但逃跑扣20精神。",
+      desc: "吃任何东西效果翻倍，但逃跑扣20精神。",
       mods: { doubleFood: true, fleeBad: true },
       cursed: true,
     },

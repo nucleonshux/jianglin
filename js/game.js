@@ -1339,7 +1339,8 @@
       b.debuff = null;
     }
     } finally {
-      setKeysEnabled(S.phase === "BATTLE");
+      // 只在还在战斗时恢复按钮；战斗结束的路径(endBattleWin/doFlee/gameOver)已自行设置好按钮状态
+      if (S.phase === "BATTLE") setKeysEnabled(true);
     }
   }
 
