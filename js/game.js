@@ -1178,15 +1178,15 @@
 
     // debuff 检查
     if (b.debuff === "disableAttack" && move === "attack") {
-      log("你下不了手。", "bad");
+      log("它的声音还卡在你脑子里。你下不了手。", "bad");
       return;
     }
     if (b.debuff === "disableDefend" && move === "defend") {
-      log("你挡不住。", "bad");
+      log("它的节奏还在你耳朵里。你挡不住。", "bad");
       return;
     }
     if (b.debuff === "disableDodge" && move === "dodge") {
-      log("你跑不掉。", "bad");
+      log("它的歌声还缠着你。你跑不掉。", "bad");
       return;
     }
 
