@@ -605,9 +605,11 @@
         Math.random() *
           (GAME_DATA.config.channelMax - GAME_DATA.config.channelMin + 1)
       );
+    currentMonster = null;
     el.titleScreen.classList.add("hidden");
     el.endOverlay.classList.add("hidden");
     el.logContent.innerHTML = "";
+    $("monster-name").classList.add("hidden");
     GAME_DATA.introLines.forEach((l) => log(l, "system"));
     log(`仪器预热完毕。剩余 ${S.tries} 次调频。`, "system");
     setFreq(0);
